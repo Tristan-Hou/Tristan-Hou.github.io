@@ -81,3 +81,10 @@ deploy:
   repo: git@github.com:Tristan-Hou/tristan-hou.github.io.git
   branch: master
   message: ""
+
+algolia:
+  applicationID: 'GNYY4UYPEN'
+  apiKey: 'ac2c5f44758cc76229d861ab965c9bb4'
+  adminApiKey: '13126bb00d84c877beee6df9d1e619fd'
+  indexName: 'MyBlog'
+  chunkSize: 5000
