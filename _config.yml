@@ -77,4 +77,7 @@ theme: landscape
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type:
+  type: git
+  repo: git@github.com:Tristan-Hou/tristan-hou.github.io.git
+  branch: master
+  message: ""
