@@ -3,11 +3,11 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
-subtitle:
-description:
-author: John Doe
-language:
+title: Tristan的博客
+subtitle: Tristan-Hou
+description: Forever has turned out to be too long!
+author: Tristan-Hou
+language: zh-Hans
 timezone:
 
 # URL
