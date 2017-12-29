@@ -15,10 +15,10 @@ override: false
 # Default NexT favicons placed in `hexo-site/themes/next/source/images/` directory.
 # And if you want to place your icons in `hexo-site/source/`, you must remove `/images` prefix from pathes.
 favicon:
-  small: /images/favicon-16x16.png
-  medium: /images/favicon-32x32.png
-  apple_touch_icon: /images/apple-touch-icon.png
-  safari_pinned_tab: /images/logo.svg
+  small: /images/favicon.jpg
+  medium: /images/favicon.jpg
+  apple_touch_icon: /images/favicon.jpg
+  safari_pinned_tab: /images/favicon.jpg
   #android_manifest: /images/manifest.json
   #ms_browserconfig: /images/browserconfig.xml
 
@@ -92,6 +92,7 @@ menu:
 # Enable/Disable menu icons.
 menu_icons:
   enable: true
+  # Icon Mapping.
 
 
 # ---------------------------------------------------------------
@@ -133,6 +134,8 @@ social_icons:
   enable: true
   icons_only: false
   transition: false
+  GitHub: github
+
 
 # Blog rolls
 links_title: 相关链接
@@ -383,7 +386,7 @@ valine:
 
 # Support for youyan comments system.
 # You can get your uid from http://www.uyan.cc
-#youyan_uid: your uid
+youyan_uid: '2152524'
 
 # Support for LiveRe comments system.
 # You can get your uid from https://livere.com/insight/myCode (General web site)
@@ -412,7 +415,7 @@ valine:
 #google_site_verification:
 
 # Google Analytics
-#google_analytics:
+google_analytics: UA-111682587-1
 
 # Bing Webmaster tools verification setting
 # See: https://www.bing.com/webmaster/
