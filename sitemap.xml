@@ -2,37 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://yoursite.com/2017/12/17/Xndroid-learn-1/</loc>
-    
-    <lastmod>2017-12-29T06:11:40.599Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/2017/12/24/ffmpeg-1/</loc>
-    
-    <lastmod>2017-12-29T06:04:31.495Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/categories/index.html</loc>
-    
-    <lastmod>2017-12-29T06:02:01.708Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yoursite.com/tags/index.html</loc>
     
-    <lastmod>2017-12-29T06:01:35.767Z</lastmod>
+    <lastmod>2017-12-29T07:37:30.873Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://yoursite.com/about/index.html</loc>
     
-    <lastmod>2017-12-28T15:43:53.705Z</lastmod>
+    <lastmod>2017-12-29T07:37:30.870Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/categories/index.html</loc>
+    
+    <lastmod>2017-12-29T07:37:30.870Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2017/12/29/ffmpeg-1/</loc>
+    
+    <lastmod>2017-12-29T07:37:30.869Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2017/12/29/Xndroid-learn-1/</loc>
+    
+    <lastmod>2017-12-29T07:37:30.869Z</lastmod>
     
   </url>
   
