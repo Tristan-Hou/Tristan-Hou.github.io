@@ -9,13 +9,6 @@
   </url>
   
   <url>
-    <loc>http://yoursite.com/about/index.html</loc>
-    
-    <lastmod>2017-12-29T07:37:30.870Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yoursite.com/categories/index.html</loc>
     
     <lastmod>2017-12-29T07:37:30.870Z</lastmod>
@@ -23,14 +16,21 @@
   </url>
   
   <url>
-    <loc>http://yoursite.com/2017/12/29/ffmpeg-1/</loc>
+    <loc>http://yoursite.com/about/index.html</loc>
+    
+    <lastmod>2017-12-29T07:37:30.870Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2017/12/29/Xndroid-learn-1/</loc>
     
     <lastmod>2017-12-29T07:37:30.869Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/2017/12/29/Xndroid-learn-1/</loc>
+    <loc>http://yoursite.com/2017/12/29/ffmpeg-1/</loc>
     
     <lastmod>2017-12-29T07:37:30.869Z</lastmod>
     
