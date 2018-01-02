@@ -382,7 +382,10 @@ valine:
   appkey: pi6DP5cWR2YlAREJhI43Id6J # your leancloud application appkey
   notify: false # mail notifier , https://github.com/xCss/Valine/wiki
   verify: false # Verification code
-  placeholder: Comment input placeholder
+  placeholder: '欢迎一起讨论~'
+  pageSize: 10
+  lang: 'zh-cn'
+  avatar: ''
 
 # Support for youyan comments system.
 # You can get your uid from http://www.uyan.cc
