@@ -378,15 +378,15 @@ changyan:
 # more info please open https://github.com/xCss/Valine
 valine:
   enable: true
-  appid:  OMklXdnuEcFRnGFEsH32d0y5-gzGzoHsz # your leancloud application appid
-  appkey:  pi6DP5cWR2YlAREJhI43Id6J # your leancloud application appkey
+  appid: OMklXdnuEcFRnGFEsH32d0y5-gzGzoHsz # your leancloud application appid
+  appkey: pi6DP5cWR2YlAREJhI43Id6J # your leancloud application appkey
   notify: false # mail notifier , https://github.com/xCss/Valine/wiki
   verify: false # Verification code
   placeholder: Comment input placeholder
 
 # Support for youyan comments system.
 # You can get your uid from http://www.uyan.cc
-youyan_uid: '2152524'
+# youyan_uid:
 
 # Support for LiveRe comments system.
 # You can get your uid from https://livere.com/insight/myCode (General web site)
