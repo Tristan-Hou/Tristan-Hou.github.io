@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.jpg?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.jpg?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.jpg?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/favicon.jpg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="虚拟机," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Tristan的博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="本文主要记录Java中Class文件的结构。">
+<meta name="keywords" content="虚拟机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java类文件结构">
+<meta property="og:url" content="http://yoursite.com/2018/01/09/Java类文件结构/index.html">
+<meta property="og:site_name" content="Tristan的博客">
+<meta property="og:description" content="本文主要记录Java中Class文件的结构。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/class%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Utf8_info%E7%BB%93%E6%9E%84%E5%9B%BE.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Utf8_info%E7%BB%93%E6%9E%84%E4%BE%8B%E5%AD%90.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_NameAndType%E7%BB%93%E6%9E%84%E5%9B%BE.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/Object%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%92%8CCONSTANT_NameAndType_info.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/age%E5%AD%97%E6%AE%B5%E5%92%8CCONSTANT_NameAndType_info.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/abcde%E5%92%8CCONSTANT_String_info.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Class_info%E5%AD%98%E5%82%A8%E5%B8%83%E5%B1%80.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Fieldref_info%E7%BB%93%E6%9E%84.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Methodref_info%E7%BB%93%E6%9E%84%E5%9B%BE.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_InterfaceMethodref_info%E7%BB%93%E6%9E%84%E5%9B%BE.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/field_info%E6%8F%8F%E8%BF%B0.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/method_info%E7%BB%93%E6%9E%84.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/methods%E5%BC%95%E7%94%A8%E7%BB%93%E6%9E%84.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/attribute%E7%BB%93%E6%9E%84.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/SourceFile.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/SourceFile%E5%B1%9E%E6%80%A7%E5%BC%95%E7%94%A8.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/Synthetic.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/ConstantValue%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/ConstantValue%E5%B1%9E%E6%80%A7%E5%BC%95%E7%94%A8.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/Code%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/LineNumberTable%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/LocalVariableTable%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/Exceptions%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/method_info%E6%89%80%E6%9C%89%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84%E5%9B%BE.jpg">
+<meta property="og:updated_time" content="2018-01-14T11:02:09.644Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java类文件结构">
+<meta name="twitter:description" content="本文主要记录Java中Class文件的结构。">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/class%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: 'GNYY4UYPEN',
+      apiKey: 'ac2c5f44758cc76229d861ab965c9bb4',
+      indexName: 'MyBlog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"输入关键字进行搜索","hits_empty":"找不到关于“ ${query} ”的文章","hits_stats":"共找到 ${hits} 篇文章，花了 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/09/Java类文件结构/"/>
+
+
+
+
+
+  <title>Java类文件结构 | Tristan的博客</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-111682587-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tristan的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Tristan-Hou</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/09/Java类文件结构/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tristan-Hou">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar-me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tristan的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java类文件结构</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-09T23:15:35+08:00">
+                2018-01-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/虚拟机/" itemprop="url" rel="index">
+                    <span itemprop="name">虚拟机</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/01/09/Java类文件结构/" class="leancloud_visitors" data-flag-title="Java类文件结构">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                  <span class="post-meta-divider">|</span>
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,725
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  20
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文主要记录Java中Class文件的结构。</p>
+<a id="more"></a>
+<h2 id="Java类文件结构"><a href="#Java类文件结构" class="headerlink" title="Java类文件结构"></a>Java类文件结构</h2><p>以8位字节为基础单位的二进制流，超过8字节的数据结构，高位在前低位在后进行分割</p>
+<h3 id="class文件中的数据项："><a href="#class文件中的数据项：" class="headerlink" title="class文件中的数据项："></a>class文件中的数据项：</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>名称</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>u4</td>
+<td>magic</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>minor_version</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>major_version</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>constant_ pool_count</td>
+<td>1</td>
+</tr>
+<tr>
+<td>cp_info</td>
+<td>constant_pool</td>
+<td>constant_ pool_count - 1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>access_flags</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>this_class</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>super_class</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>interfaces_count</td>
+<td>1</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>interfaces</td>
+<td>interfaces_count</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>fields_count</td>
+<td>1</td>
+</tr>
+<tr>
+<td>field_info</td>
+<td>fields</td>
+<td>fields_count</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>methods_count</td>
+<td>1</td>
+</tr>
+<tr>
+<td>method_info</td>
+<td>methods</td>
+<td>methods_count</td>
+</tr>
+<tr>
+<td>u2</td>
+<td>attribute_count</td>
+<td>1</td>
+</tr>
+<tr>
+<td>attribute_info</td>
+<td>attributes</td>
+<td>attributes_count</td>
+</tr>
+</tbody>
+</table>
+<p>u1、u2、u4、u8分别代表1、2、4、8个字节</p>
+<div align="left"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/class%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84.png" width="500" height="500" alt="" aligh="center/"><br>   </div>
+
+<h3 id="魔数：magic"><a href="#魔数：magic" class="headerlink" title="魔数：magic"></a>魔数：magic</h3><p>4个字节，代表class文件，固定值为0xCAFFBABE。如果不是这个值，文件不能被JVM识别</p>
+<h3 id="版本号：minor-major-version"><a href="#版本号：minor-major-version" class="headerlink" title="版本号：minor/major_version"></a>版本号：minor/major_version</h3><p>2个字节，次/主版本号</p>
+<h3 id="常量池："><a href="#常量池：" class="headerlink" title="常量池："></a>常量池：</h3><p>先以2字节的容量计数值constant_pool_count存储常量池中常量数量；常量池存放字符串、final常量值、当前类类名、字段名、方法名、字段和方法的描述符，当前类字段和方法引用信息等</p>
+<ol>
+<li>常量池中索引项从1开始，引用0的地方代表此处不引用任何常量池项</li>
+<li>常量池存两类常量：字面量、符号引用</li>
+<li><p>符号引用：</p>
+<ul>
+<li>类、接口全限定名：类似于java/lang/Object，用/不用.（java.lang.Object）</li>
+<li><p>字段名称和描述符：所有的类型在描述符中都有对应的字符或字符串来对应。   </p>
+<p>| 类型 | 对应字符或字符串 | 例子 |<br>|— | — |—|<br>|byte | B |—|<br>|char | C |—|<br>|double | D |—|<br>|float | F |—|<br>|int | I |—|<br>|long | J |—|<br>|short | S |—|<br>|boolean | Z |—|<br>|void | V |—|<br>|类、接口、枚举 | “L”+全限定名+“;” | Ljava/lang/Object;|<br>|数组 | n个“[”+元素类型字符/串| [[[Ljava/lang/Object; |<br>  float和boolean对应的不是F和B，历史原因。</p>
+</li>
+<li><p>方法名称和描述符：所有参数的类型列表和方法返回值——<code>(参数1类型参数2类型参数3类型 ...)返回值类型</code> 各个参数之间无空格</p>
+<p>  | 方法描述符 | 方法声明 |<br>  |— | — |<br>  |()I | int getSize()|<br>  |()Ljava/lang/String;|String toString()|<br>  |([Ljava/lang/String;)V|void main(String[] args)|<br>  | …. |<br>  |([BII)I | int read(byte[] b, int offm int len)|<br>  |()[[Ljava/lang/Object; | Object[][] getObjectArray() |</p>
+</li>
+<li><p>java没有<code>连接</code>步骤，是在需要一个class时候，由classloader加载class文件进行动态连接，从常量池里获取符号引用，创建类时解析、翻译到具体内存地址中。否则无法找到字段、方法对应的内存入口地址，无法被虚拟机使用</p>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="常量池数据项："><a href="#常量池数据项：" class="headerlink" title="常量池数据项："></a>常量池数据项：</h4><table>
+<thead>
+<tr>
+<th>数据项类型</th>
+<th>类型标志</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CONSTANT_ Utf8_info</td>
+<td>1</td>
+<td>UTF-8编码的字符串</td>
+</tr>
+<tr>
+<td>CONSTANT_ Integer_info</td>
+<td>3</td>
+<td>int类型字面值</td>
+</tr>
+<tr>
+<td>CONSTANT_ Float_info</td>
+<td>4</td>
+<td>float类型字面值</td>
+</tr>
+<tr>
+<td>CONSTANT_ Long_info</td>
+<td>5</td>
+<td>long类型字面值</td>
+</tr>
+<tr>
+<td>CONSTANT_ Double_info</td>
+<td>6</td>
+<td>double类型字面值</td>
+</tr>
+<tr>
+<td>CONSTANT_ Class_info</td>
+<td>7</td>
+<td>对一个类或接口的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_ String_info</td>
+<td>8</td>
+<td>String类型字面值</td>
+</tr>
+<tr>
+<td>CONSTANT_ Fieldref_info</td>
+<td>9</td>
+<td>对一个字段的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_ Methodref_info</td>
+<td>10</td>
+<td>对一个类中声明的方法的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_ InterfaceMethodref_info</td>
+<td>11</td>
+<td>对一个接口中声明的方法的符号引用</td>
+</tr>
+<tr>
+<td>CONSTANT_ NameAndType_info</td>
+<td>12</td>
+<td>对一个字段或方法的部分符号引用</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>每个类型中都有一个tag，位于数据项第一个字节，值为上表的“类型标志”</li>
+</ul>
+<h4 id="CONSTANT-Utf8-info"><a href="#CONSTANT-Utf8-info" class="headerlink" title="CONSTANT_Utf8_info"></a><code>CONSTANT_Utf8_info</code></h4><p>最基础的数据项，存储一个常量池字符串。</p>
+<ul>
+<li>常量池中所有的<code>字面量</code>几乎都是通过这个类型描述的，其他类型的常量池项只不过是对CONSTANT_Utf8_info的引用</li>
+<li>首位tag值为1，随后2个字节是字符串长度length，接下来是字符串的存储值:</li>
+</ul>
+<div align="center"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Utf8_info%E7%BB%93%E6%9E%84%E5%9B%BE.jpg" width="200" height="200" alt="CONSTANT_Utf8_info格式" align="center"><br>  </div>
+
+<p>  因为class中文件中方法、字段都要引用CONSTANT<em> Utf8</em> info，因此此类型最大长度就是java中方法、字段名称的最大长度——即：2的16次方65535，如果方法名、变量名超过该值，就无法编译<br>  如果存储的String为Hello：</p>
+   <div align="center"><br>   <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Utf8_info%E7%BB%93%E6%9E%84%E4%BE%8B%E5%AD%90.jpg" width="200" height="200" alt="" aligh="center/"><br>   </div>
+
+<ul>
+<li>可包括的字符串：<ul>
+<li>字符串常量：“Hello”等</li>
+<li>全限定名：当前类、接口、枚举、直接弗雷、实现或继承的接口、引用的类型</li>
+<li>方法、字段名称：本类的、引用的</li>
+<li>方法、字段描述符：本类的、引用的</li>
+<li>当前class文件中属性相关字符串：属性信息attribute</li>
+</ul>
+</li>
+<li><p>更具体的例子：</p>
+<pre><code>package com.jg.zhang;
+public class Programer extends Person {
+
+    static String company = &quot;CompanyA&quot;;
+    static{
+        System.out.println(&quot;staitc init&quot;);
+    }
+
+    String position;
+    Computer computer;
+
+    public Programer() {
+        this.position = &quot;engineer&quot;;
+        this.computer = new Computer();
+    }
+
+    public void working(){
+        System.out.println(&quot;coding...&quot;);
+        computer.working();
+    }
+} 
+</code></pre><p> 反编译后取出CONSTANT_ Utf8_info相关数据项：</p>
+<pre><code>#2 = Utf8      com/jg/zhang/Programer     //当前类的全限定名 
+#4 = Utf8      com/jg/zhang/Person        //父类的全限定名  
+#5 = Utf8      company                    //company字段的名称  
+#6 = Utf8      Ljava/lang/String;         //company和position字段的描述符  
+#7 = Utf8      position                   //position字段的名称  
+#8 = Utf8      computer                   //computer字段的名称  
+#9 = Utf8      Lcom/jg/zhang/Computer;    //computer字段的描述符  
+#10 = Utf8     &lt;clinit&gt;                   //类初始化方法（即静态初始化块）的方法名  
+#11 = Utf8     ()V                        //working方法的描述符  
+#12 = Utf8     Code                       //Code属性的属性名  
+#14 = Utf8     CompanyA                   //程序中的常量字符串  
+#19 = Utf8     java/lang/System           //所引用的System类的全限定名  
+#21 = Utf8     out                        //所引用的out字段的字段名  
+#22 = Utf8     Ljava/io/PrintStream;      //所引用的out字段的描述符  
+#24 = Utf8     staitc init                //程序中的常量字符串  
+#27 = Utf8     java/io/PrintStream        //所引用的PrintStream类的全限定名  
+#29 = Utf8     println                    //所引用的println方法的方法名  
+#30 = Utf8     (Ljava/lang/String;)V      //所引用的println方法的描述符  
+#31 = Utf8     LineNumberTable            //LineNumberTable属性的属性名  
+#32 = Utf8     LocalVariableTable         //LocalVariableTable属性的属性名  
+#33 = Utf8     &lt;init&gt;                     //当前类的构造方法的方法名  
+#41 = Utf8     com/jg/zhang/Computer      //所引用的Computer类的全限定名  
+#45 = Utf8     this                       //局部变量this的变量名  
+#46 = Utf8     Lcom/jg/zhang/Programer;   //局部变量this的描述符  
+#47 = Utf8     working                    //woking方法的方法名  
+#49 = Utf8     coding...                  //程序中的字符串常量  
+#52 = Utf8     SourceFile                 //SourceFile属性的属性名  
+#53 = Utf8     Programer.java             //当前类所在的源文件的文件名
+</code></pre></li>
+</ul>
+<h4 id="CONSTANT-NameAndType"><a href="#CONSTANT-NameAndType" class="headerlink" title="CONSTANT_NameAndType"></a><code>CONSTANT_NameAndType</code></h4><p>字段名称-字段描述符/方法名称-方法描述符</p>
+<ul>
+<li><p>首位tag为12，随后两个字节name<em>index，指向常量池中一个CONSTANT</em> Utf8_info，存储方法/字段名称，接下来两个字节descriptor<em>index指向一个CONSTANT</em> Utf8_info，存储方法/字段描述符</p>
+<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_NameAndType%E7%BB%93%E6%9E%84%E5%9B%BE.jpg" width="170" height="180" alt="" aligh="center/"><br></div>
+</li>
+<li><p>具体的例子:</p>
+<pre><code>package com.jg.zhang;
+public class Person {
+    int age;
+    int getAge(){
+        return age;
+    }
+} 
+</code></pre><p>  javap反编译:</p>
+<pre><code>#1 = Class         #2         //  com/jg/zhang/Person  
+#2 = Utf8          com/jg/zhang/Person  
+#3 = Class         #4         //  java/lang/Object 
+#4 = Utf8          java/lang/Object  
+#5 = Utf8          age  
+#6 = Utf8          I  
+#7 = Utf8          &lt;init&gt;  
+#8 = Utf8          ()V  
+#9 = Utf8          Code  
+#10 = Methodref    #3.#11     //  java/lang/Object.&quot;&lt;init&gt;&quot;:()V  
+#11 = NameAndType  #7:#8      //  &quot;&lt;init&gt;&quot;:()V  
+#12 = Utf8         LineNumberTable  
+#13 = Utf8         LocalVariableTable  
+#14 = Utf8         this  
+#15 = Utf8         Lcom/jg/zhang/Person; 
+#16 = Utf8         getAge  
+#17 = Utf8         ()I  
+#18 = Fieldref     #1.#19     //  com/jg/zhang/Person.age:I  
+#19 = NameAndType  #5:#6      //  age:I  
+#20 = Utf8         SourceFile  
+#21 = Utf8         Person.java
+</code></pre><ul>
+<li>第#11和#19是CONSTANT_NameAndType，#11引用了#7和#8，#19引用了#5和#6</li>
+<li>第#7和#8是CONSTANT_Utf8_info，值为<init>和()V</init></li>
+<li>CONSTANT_ NameAndType是对一个字段或方法的部分符号引用，换句话说，它应该指向一个被引用的字段或方法。如果类中定义了一个字段或方法，但是没有在别处被引用，那么常量池中是不会有相应的CONSTANT_NameAndType的</li>
+<li>源码中有getAge()和编译器添加的构造函数两个方法，因为没有在别处调用，所有不存在相对应的CONSTANT_NameAndType</li>
+<li>第#7和#8处的<init>、()V是父类Object的构造方法，因为子类的构造方法默认调用父类无参构造方法</init></li>
+<li>第#5和#6存储age和I，描述了源码中的age字段。</li>
+<li>在getAge()中引用了age，所有存在对应的CONSTANT_NameAndType</li>
+</ul>
+<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/Object%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%92%8CCONSTANT_NameAndType_info.jpg" width="400" height="400" alt="" aligh="center/"><br></div>
+
+<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/age%E5%AD%97%E6%AE%B5%E5%92%8CCONSTANT_NameAndType_info.jpg" width="400" height="400" alt="" aligh="center/"><br></div>
+
+</li>
+</ul>
+<h4 id="CONSTANT-Integer-info"><a href="#CONSTANT-Integer-info" class="headerlink" title="CONSTANT_Integer_info"></a><code>CONSTANT_Integer_info</code></h4><ul>
+<li>首位tag为3，接下来4个字节bytes，存储int</li>
+<li><p>示例代码：</p>
+<pre><code>void printInt(){  
+    System.out.println(65535);  
+}
+</code></pre><p>反编译：</p>
+<pre><code>Constant pool:
+...
+#21 = Integer      65535
+...
+{
+...
+    void printInt();
+    flags:
+    Code:
+        stack=2, locals=1, args_size=1
+            0: getstatic    #15   // Field java/lang/System.out:Ljava/io/PrintStream; 
+            3: ldc      #21   // int 65535
+            5: invokevirtual    #22   // Method java/io/PrintStream.println:(I)V
+            8: return
+        LineNumberTable:
+            line 6: 0
+            line 7: 8
+        LocalVariableTable:  
+            Start  Length  Slot  Name   Signature 
+              0       9     0    this   Lcom/jg/zhang/TestInt;  
+ }  
+</code></pre><p><code>3: Idc #21</code>：Idc引用了第#21项，为65535</p>
+</li>
+</ul>
+<h4 id="CONSTANT-Float-info"><a href="#CONSTANT-Float-info" class="headerlink" title="CONSTANT_Float_info"></a><code>CONSTANT_Float_info</code></h4><p>与CONSTANT_Integer_info类似，tag值为4，存储float类型值，4字节</p>
+<h4 id="CONSTANT-Long-info"><a href="#CONSTANT-Long-info" class="headerlink" title="CONSTANT_Long_info"></a><code>CONSTANT_Long_info</code></h4><p>与CONSTANT_Integer_info类似，tag值为5，存储long类型值，8字节</p>
+<h4 id="CONSTANT-Double-info"><a href="#CONSTANT-Double-info" class="headerlink" title="CONSTANT_Double_info"></a><code>CONSTANT_Double_info</code></h4><p>与CONSTANT_Integer_info类似，tag值为6，存储double类型值，8字节</p>
+<h4 id="CONSTANT-String-info"><a href="#CONSTANT-String-info" class="headerlink" title="CONSTANT_String_info"></a><code>CONSTANT_String_info</code></h4><p>tag值为8，随后2个字节string_index是常量池引用，指向一个CONSTANT_Utf8_info，存放字符串</p>
+<ul>
+<li><p>代码：</p>
+<pre><code>void printStrng(){  
+    System.out.println(&quot;abcdef&quot;);  
+ }
+</code></pre><p>反编译：</p>
+<pre><code>Constant pool:
+...
+#21 = String     #22      //  abcdef  
+#22 = Utf8       abcdef 
+...
+{
+    void printStrng();
+        flags:
+        Code: 
+            stack=2, locals=1, args_size=1
+                 0: getstatic     #15     // Field java/lang/System.out:Ljava/io/PrintStream;
+                 3: ldc           #21     // String abcdef  
+                 5: invokevirtual #23     // Method java/io/PrintStream.println:(Ljava/lang/String;)V 
+                 8: return
+             LineNumberTable:
+                 line 7: 0 
+                 line 8: 8 
+             LocalVariableTable: 
+                 Start  Length  Slot  Name   Signature
+                   0      9      0   this   Lcom/jg/zhang/TestInt;
+}
+</code></pre><p> Idc指向#21，#21为CONSTANT_String_info，它又指向#22，#22是一个CONSTANT_Utf8_info，存储abcdef</p>
+ <div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/abcde%E5%92%8CCONSTANT_String_info.png" width="400" height="400" alt="" aligh="center/"><br></div>
+
+</li>
+</ul>
+<h4 id="CONSTANT-Class-info"><a href="#CONSTANT-Class-info" class="headerlink" title="CONSTANT_Class_info"></a><code>CONSTANT_Class_info</code></h4><p>对类或者接口的符号引用。当前类信息，当前类引用，其他类引用</p>
+<ul>
+<li>tag值为7，随后2字节name_index指向一个CONSTANT_Utf8_info，存储类的全限定名或数组的描述符字符串<ul>
+<li>Object类型：java/lang/Object </li>
+<li>Object[]类型：[Ljava/lang/Object;</li>
+</ul>
+</li>
+<li><p>结构图:</p>
+<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Class_info%E5%AD%98%E5%82%A8%E5%B8%83%E5%B1%80.jpg" width="400" height="400" alt="" aligh="center/"><br></div>
+</li>
+<li><p>在一个类中引用了System这个类,常量池:</p>
+<pre><code>Constant pool:
+    #16 = Class     #17    // java/lang/System
+    #17 = Utf8      java/lang/System
+</code></pre></li>
+</ul>
+<h4 id="CONSTANT-Fieldref-info"><a href="#CONSTANT-Fieldref-info" class="headerlink" title="CONSTANT_Fieldref_info"></a><code>CONSTANT_Fieldref_info</code></h4><p>对一个字段的符号引用。当前类中字段、其他类中字段、成员变量字段、静态变量字段</p>
+<ul>
+<li>tag值为9，随后2个字节class<em> index指向CONSTANT</em> Class<em> info，表示被引用的字段的类型、接口，接下来2字节name</em> and<em> type</em> index指向CONSTANT<em> NameAndType</em> info，表示被引用的字段的名称和描述符</li>
+<li><p>代码：</p>
+<pre><code>package com.jg.zhang;
+public class TestInt {
+   int a = 10;
+   void print(){
+       System.out.println(a);
+   }
+}
+</code></pre><p> 反编译：</p>
+<pre><code>Constant pool:
+#1 = Class      #2        //  com/jg/zhang/TestInt
+#2 = Utf8       com/jg/zhang/TestInt
+...
+#5 = Utf8       a
+#6 = Utf8       I
+...
+#12 = Fieldref       #1.#13       //  com/jg/zhang/TestInt.a:I
+#13 = NameAndType      #5:#6        //  a:I 
+...
+{
+    void print();
+        flags:
+        Code:
+            stack=2, locals=1, args_size=1
+                0: getstatic     #19     // Field java/lang/System.out:Ljava/io/PrintStream;  
+                3: aload_0
+                4: getfield      #12     // Field a:I  
+                7: invokevirtual #25     // Method java/io/PrintStream.println:(I)V
+                10: return  
+} 
+</code></pre><div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Fieldref_info%E7%BB%93%E6%9E%84.jpg" width="600" height="500" alt="" aligh="center/"><br></div>  
+
+</li>
+</ul>
+<h4 id="CONSTANT-Methodref-info"><a href="#CONSTANT-Methodref-info" class="headerlink" title="CONSTANT_Methodref_info"></a><code>CONSTANT_Methodref_info</code></h4><p>对一个类中方法的符号引用。本类或其他类，成员方法、静态方法均可，但不会是对接口中的方法的符号引用。类似CONSTANT<em> Fieldref</em> info</p>
+<ul>
+<li>tag为10，2字节class<em> index指向CONSTANT</em> Class<em> info，表示被引用的方法所在的类型，2字节name</em> and<em> type</em> index指向CONSTANT<em> NameAndType</em> info，代表被引用的方法的名称和描述符</li>
+<li><p>代码：</p>
+<pre><code>//程序1
+package com.jg.zhang;
+public class Programer {
+    Computer computer;
+    public Programer(Computer computer){
+        this.computer = computer;
+    }  
+    public void doWork(){
+        computer.calculate(); 
+    }  
+}
+//程序2
+package com.jg.zhang; 
+public class Computer {  
+    public void calculate() { 
+        System.out.println(&quot;working...&quot;);  
+    }  
+} 
+</code></pre><p> 程序1调用了程序2，只反编译程序1：</p>
+<pre><code>Constant pool:
+...
+#12 = Utf8     ()V
+...
+#20 = Methodref      #21.#23      //  com/jg/zhang/Computer.calculate:()V 
+#21 = Class          #22          //  com/jg/zhang/Computer
+#22 = Utf8           com/jg/zhang/Computer
+#23 = NameAndType    #24:#12      //  calculate:()V
+#24 = Utf8           calculate
+...
+{
+    com.jg.zhang.Computer computer; 
+       flags:
+       ...
+       public void doWork();
+           flags: ACC_PUBLIC  
+           Code:  
+               stack=1, locals=1, args_size=1  
+                   0: aload_0  
+                   1: getfield      #13      // Field computer:Lcom/jg/zhang/Computer;  
+                   4: invokevirtual #20      // Method com/jg/zhang/Computer.calculate:()V  
+                   7: return 
+}
+</code></pre><div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Methodref_info%E7%BB%93%E6%9E%84%E5%9B%BE.jpg" width="600" height="500" alt="" aligh="center/"><br></div> 
+
+</li>
+</ul>
+<h4 id="CONSTANT-InterfaceMethodref-info"><a href="#CONSTANT-InterfaceMethodref-info" class="headerlink" title="CONSTANT_InterfaceMethodref_info"></a><code>CONSTANT_InterfaceMethodref_info</code></h4><p>表示对一个接口方法的符号引用，不表示类中的方法。</p>
+<ul>
+<li>tag为11，2个字节的class<em>index指向CONSTANT</em> Class<em> info，表示被引用的而方法所在的接口，2字节name</em> and<em> type</em> index指向CONSTANT<em> NameAndType</em> info，被引用方法的名称和描述符。</li>
+<li><p>代码：</p>
+<pre><code>package com.jg.zhang; 
+    public class Plane {
+        IFlyable flyable; 
+    void flyToSky(){  
+        flyable.fly();  
+    }  
+}  
+...
+package com.jg.zhang; 
+public interface IFlyable {  
+    void fly();  
+} 
+</code></pre><p>反编译：</p>
+<pre><code>Constant pool:
+...
+#8 = Utf8                ()V  
+...
+#19 = InterfaceMethodref #20.#22     //  com/jg/zhang/IFlyable.fly:()V  
+#20 = Class              #21         //  com/jg/zhang/IFlyable  
+#21 = Utf8               com/jg/zhang/IFlyable  
+#22 = NameAndType        #23:#8      //  fly:()V  
+#23 = Utf8               fly 
+{
+    com.jg.zhang.IFlyable flyable;  
+       flags:
+       ...
+    void flyToSky();  
+       flags:  
+       Code:  
+          stack=1, locals=1, args_size=1  
+             0: aload_0  
+             1: getfield    #17    // Field flyable:Lcom/jg/zhang/IFlyable;  
+             4: invokeinterface   #19, 1    // InterfaceMethod com/jg/zhang/IFlyable.fly:()V  
+             9: return 
+}   
+</code></pre><div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_InterfaceMethodref_info%E7%BB%93%E6%9E%84%E5%9B%BE.jpg" width="600" height="500" alt="" aligh="center/"><br></div>  
+
+</li>
+</ul>
+<h3 id="访问标志"><a href="#访问标志" class="headerlink" title="访问标志"></a>访问标志</h3><p>access_flags：描述当前类或接口的访问修饰符，public、private等。同时有一个标志位记录这个class是类还是接口。</p>
+<table>
+<thead>
+<tr>
+<th>表知名</th>
+<th>标志值</th>
+<th>含义</th>
+<th>针对的对象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ACC_PUBLIC</td>
+<td>0x0001</td>
+<td>public类型</td>
+<td>所有类型</td>
+</tr>
+<tr>
+<td>ACC_FINAL</td>
+<td>0x0010</td>
+<td>final类型</td>
+<td>类</td>
+</tr>
+<tr>
+<td>ACC_SUPER</td>
+<td>0x0020</td>
+<td>使用新的invokespecial语义</td>
+<td>类和接口</td>
+</tr>
+<tr>
+<td>ACC_INTERFACE</td>
+<td>0x0200</td>
+<td>接口类型</td>
+<td>接口</td>
+</tr>
+<tr>
+<td>ACC_ABSTRACT</td>
+<td>0x0400</td>
+<td>抽象类型</td>
+<td>类和接口</td>
+</tr>
+<tr>
+<td>ACC_SYNTHETIC</td>
+<td>0x1000</td>
+<td>该类不由用户代码生成</td>
+<td>所有类型</td>
+</tr>
+<tr>
+<td>ACC_ANNOTATION</td>
+<td>0x2000</td>
+<td>注解类型</td>
+<td>注解</td>
+</tr>
+<tr>
+<td>ACC_ENUM</td>
+<td>0x4000</td>
+<td>枚举类型</td>
+<td>枚举</td>
+</tr>
+</tbody>
+</table>
+<p>access_flags只能描述类、接口，不能描述字段或方法的修饰符</p>
+<h3 id="类索引"><a href="#类索引" class="headerlink" title="类索引"></a>类索引</h3><p>this<em> class：2字节，对当前类的描述，指向一个CONSTANT</em> Class_ info，存放着当前类的全限定名</p>
+<ul>
+<li><p>代码：</p>
+<p>   package com.jg.zhang;<br>   public class Person { </p>
+<pre><code>int age;  
+int getAge(){  
+    return age;  
+}  
+</code></pre><p>   }<br>反编译：</p>
+<pre><code>Constant pool:  
+#1 = Class     #2     //  com/jg/zhang/Person  
+#2 = Utf8      com/jg/zhang/Person
+</code></pre></li>
+</ul>
+<h3 id="父类索引"><a href="#父类索引" class="headerlink" title="父类索引"></a>父类索引</h3><p>super<em> class：描述的是当前类的超类的信息，指向一个CONSTANT</em> Class_ info，存放着当前类的超类的全限定名（如果直接继承Object，那么super<em>class的索引值为0，也可以视为这个索引不引用任何常量池中的数据项）。其他类似this</em> class</p>
+<h3 id="接口索引集合"><a href="#接口索引集合" class="headerlink" title="接口索引集合"></a>接口索引集合</h3><ul>
+<li><p>interfaces_ count：当前类所实现的接口的数量或当前接口所继承的超接口数量（只有当前类直接实现的接口才会被统计， 如果当前类继承了另一个类， 而另一个类又实现了一个接口， 那么这个接口不会统计在当前类的interfaces_count中）</p>
+</li>
+<li><p>interfaces：共有interfaces<em> count个，指向CONSTANT</em> Class_ info，带表当前类直接实现、继承的接口的全限定名</p>
+</li>
+</ul>
+<h3 id="字段表集合"><a href="#字段表集合" class="headerlink" title="字段表集合"></a>字段表集合</h3><ul>
+<li>fields_count：当前类中定义的字段的个数，包括静态字段，但不包括从父类集成的字段<ul>
+<li>编译器可能会自动添加某些字段，比如内部类拥有外部类的对象引用，所以class文件中字段数量可能多于源文件定义的数量</li>
+</ul>
+</li>
+<li><p>fields：共有fields_count个，每个都是一个field_info</p>
+<ul>
+<li>field_info结构：</li>
+</ul>
+<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/field_info%E6%8F%8F%E8%BF%B0.jpg" width="150" height="160" alt="" aligh="center/"><br> </div> 
+
+<ul>
+<li>access_flags：2字节</li>
+</ul>
+<p>| 标志位名称 | 值 |含义 |设定者|<br>|—-|—-|—-|—-|<br>| ACC_PUBLIC | 0x0001 | 字段被设为public | 类和接口 |<br>| ACC_PRIVATE | 0x0002 | 字段被设为private | 类 |<br>| ACC_PROTECTED | 0x0004 | 字段被设为protected | 类 |<br>| ACC_STATIC | 0x0008 | 字段被设为static | 类和接口 |<br>| ACC_FINAL | 0x0010 | 字段被设为final | 类和接口 |<br>| ACC_VOLATILE | 0x0040 | 字段被设为volatile | 类 |<br>| ACC_TRANSIENT | 0x0080 | 字段被设为transient | 类 |</p>
+<ul>
+<li>name<em>index：2字节，指向常量池索引CONSTANT</em> Utf8_i nfo，描述当前字段名。</li>
+<li>descriptor<em>index：2字节，指向常量池索引CONSTANT</em> Utf8_i nfo，描述当前字段描述符。</li>
+<li>attribute_count：属性个数</li>
+<li>attributes：属性信息，attribute_count个属性attribute_info。共有三种属性：ConstantValue， Deprecated， 和 Synthetic</li>
+<li><p>代码：</p>
+<pre><code>package com.jg.zhang; 
+public class Programer extends Person{ 
+    private Computer computer;  
+    public Programer(Computer computer){  
+        this.computer = computer;  
+    }  
+    public void doWork(){  
+       computer.calculate();  
+    }  
+} 
+</code></pre><p> 反编译：</p>
+<pre><code>Constant pool: 
+...
+#5 = Utf8     computer  
+#6 = Utf8     Lcom/jg/zhang/Computer;
+...   
+{ 
+    private com.jg.zhang.Computer computer;  
+    flags: ACC_PRIVATE
+}
+</code></pre></li>
+</ul>
+</li>
+</ul>
+<h3 id="方法表集合"><a href="#方法表集合" class="headerlink" title="方法表集合"></a>方法表集合</h3><ul>
+<li>methods_count：当前的类中定义的方法的个数，包括静态方法，不包括父类继承的方法<ul>
+<li>编译器会增加某些方法，例如<init>或<clinit>，因此可能或多于源文件方法数</clinit></init></li>
+</ul>
+</li>
+<li><p>methods：共有methods_count个，每个都是一个method_info</p>
+<ul>
+<li><p>method_info结构：</p>
+<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/method_info%E7%BB%93%E6%9E%84.jpg" width="150" height="160" alt="" aligh="center/"><br></div> 
+</li>
+<li><p>access_flags: 类似field_info，多了ACC_SYNCHRONIZED、ACC_NATIVE、ACC_ABSTRACT、ACC_STRICT</p>
+</li>
+<li>name_index：当前方法的方法名</li>
+<li>descriptor_index：当前方法的描述符</li>
+<li>attribute_count：属性个数</li>
+<li>attributes：属性信息，attribute_count个属性attribute_info。有Code， Deprecated， Exceptions 和Synthetic</li>
+</ul>
+</li>
+</ul>
+<div align="center"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/methods%E5%BC%95%E7%94%A8%E7%BB%93%E6%9E%84.jpg" width="600" height="500" alt="" aligh="center/"><br>   </div> 
+
+<h3 id="属性表集合"><a href="#属性表集合" class="headerlink" title="属性表集合"></a>属性表集合</h3><ul>
+<li>attributes_count：2字节，class文件中属性个数</li>
+<li><p>attributes：attributes_count个，每一个都是一个attribute_info。在class文件顶层、field_info、method_info都会出现</p>
+<ul>
+<li>结构：</li>
+</ul>
+<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/attribute%E7%BB%93%E6%9E%84.jpg" width="130" height="100" alt="" aligh="center/"><br> </div> 
+
+<ul>
+<li>attribute_name_index：2字节，指向CONSTANT_Utf8_info，存放当前属性的名字</li>
+<li>attribute_length：当前属性的长度</li>
+<li>info：真实的属性数据</li>
+</ul>
+</li>
+</ul>
+<h4 id="几个重要的属性"><a href="#几个重要的属性" class="headerlink" title="几个重要的属性"></a>几个重要的属性</h4><h5 id="SourceFile属性："><a href="#SourceFile属性：" class="headerlink" title="SourceFile属性："></a>SourceFile属性：</h5><ul>
+<li>顶层class文件中出现，描述了该类是从哪个源文件中编译来的，一个源文件中可以存在多个类</li>
+</ul>
+<div align="center"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/SourceFile.jpg" width="200" height="180" alt="" aligh="center/"><br>   </div> 
+
+<ul>
+<li>attribute_name_index：“SourceFile”字符串</li>
+<li>attribute_length：长度，2</li>
+<li>sourcefile_index：指向CONSTANT_Utf8_info，生成该类的源文件的文件名，没有路径</li>
+<li><p>代码：</p>
+<pre><code>package com.jg.zhang;  
+public class Person {  
+    int age;  
+    int getAge(){  
+        return age;  
+    }  
+} 
+</code></pre><p>反编译：</p>
+<pre><code>public class com.jg.zhang.Person  
+    SourceFile: &quot;Person.java&quot;  
+Constant pool:  
+...  
+    #20 = Utf8               SourceFile  
+    #21 = Utf8               Person.java  
+...
+</code></pre></li>
+</ul>
+<div align="center"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/SourceFile%E5%B1%9E%E6%80%A7%E5%BC%95%E7%94%A8.jpg" width="600" height="500" alt="" aligh="center/"><br>   </div> 
+
+<h5 id="InnerClasses属性"><a href="#InnerClasses属性" class="headerlink" title="InnerClasses属性"></a>InnerClasses属性</h5><p>顶层class文件中出现，描述的是内部类和外围类的关系.每个类可能有多个内部类， 而这些内部类中可能还有内部类， 多层嵌套。外围类中的InnerClasses属性必须描述它的所有内部类， 而内部类中的InnerClasses也必须描述它的外围类</p>
+<h5 id="Synthetic属性"><a href="#Synthetic属性" class="headerlink" title="Synthetic属性"></a>Synthetic属性</h5><p>可以出现在filed_info、method_info和顶层的ClassFile中。表示这个字段， 方法或类是由编译器自动添加的，不是程序员写的，没有源文件（内部类对外部类的引用，构造方法等）</p>
+  <div align="center"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/Synthetic.jpg" width="200" height="180" alt="" aligh="center/"><br>  </div>
+
+
+<h5 id="ConstantValue属性"><a href="#ConstantValue属性" class="headerlink" title="ConstantValue属性"></a>ConstantValue属性</h5><p>出现在field_info中，是一个和字段相关的属性，静态基本类型字段或静态String字段会出现，为静态变量提供了一种初始化的方式（另一种是<clinit>初始化方法）</clinit></p>
+<ul>
+<li>结构：<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/ConstantValue%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84.jpg" width="200" height="180" alt="" aligh="center/"><br> </div> 
+
+
+</li>
+</ul>
+<ul>
+<li><p>constantvalue_index：根据field_info描述的字段的不同， 可以是不同类型的数据项——byte， short， char， int， boolean类型都指向一个CONSTANT_Integer_info（因为虽然java语言支持byte， short， char， boolean类型， 但是JVM却不支持这几种类型，class文件中的常量池中没有和这几个数据类型相对应的数据项， 这几中类型都被JVM在执行时当做int来对待，都对应CONSTANT_Integer_info）</p>
+</li>
+<li><p>代码：</p>
+<pre><code>package com.jg.zhang;  
+public class Person {  
+   static final int a = 1;  
+   int age;  
+   int getAge(){  
+       return age;  
+   }  
+ } 
+</code></pre><p>反编译：</p>
+<pre><code>Constant pool:  
+...
+    #7 = Utf8         ConstantValue  
+    #8 = Integer      1  
+...
+{  
+    static final int a;  
+        flags: ACC_STATIC, ACC_FINAL  
+        ConstantValue: int 1  
+    ...  
+}  
+</code></pre>  <div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/ConstantValue%E5%B1%9E%E6%80%A7%E5%BC%95%E7%94%A8.jpg" width="500" height="400" alt="" aligh="center/"><br> </div> 
+
+</li>
+</ul>
+<h5 id="Deprecated属性"><a href="#Deprecated属性" class="headerlink" title="Deprecated属性"></a>Deprecated属性</h5><p>可以出现在filed_info、method_info和顶层的ClassFile中,表示这个字段， 方法或类已经过时.用来支持源文件中的@deprecated注解</p>
+<h5 id="Code属性"><a href="#Code属性" class="headerlink" title="Code属性"></a>Code属性</h5><p>非抽象方法都会有的属性，是方法的一个最重要的属性,存放的是方法的字节码指令和操作数栈，局部变量相关的信息</p>
+ <div align="center"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/Code%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84.jpg" width="500" height="400" alt="" aligh="center/"><br>   </div> 
+
+<ul>
+<li>attribute_name_index：属性名字“Code”</li>
+<li>attribute_length：长度</li>
+<li>max_stack：指定当前方法被执行引擎执行的时候， 在栈帧中需要分配的操作数栈的大小</li>
+<li>max_locals：指定当前方法被执行引擎执行的时候， 在栈帧中需要分配的局部表量表的大小（方法中的局部变量包括方法的参数， 方法的默认参数this， 方法体中定义的变量， catch语句中的异常对象）</li>
+<li>code_length：该方法的字节码的长度，每条字节码占一个字节</li>
+<li>code：字节码指令</li>
+<li>exception_table_length：异常表的大小</li>
+<li>exception_table：对<code>方法体</code>中try-catch_finally的描述，包含exception_info</li>
+<li>attributes_count：</li>
+<li>attributes：存放了Code属性中的其他属性，LineNumberTable和LocalVariableTable</li>
+</ul>
+<h5 id="LineNumberTable属性"><a href="#LineNumberTable属性" class="headerlink" title="LineNumberTable属性"></a>LineNumberTable属性</h5><p>存在于Code属性中，它建立了字节码偏移量到源代码行号之间的联系</p>
+<div align="center"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/LineNumberTable%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84.jpg" width="500" height="400" alt="" aligh="center/"><br>   </div> 
+
+<ul>
+<li>line_number_info 结构描述了一条字节码和源码行号的对应关系</li>
+<li>start_pc描述的字节码指令的偏移量，line_number描述的字节码指令对应的源码中的行号</li>
+</ul>
+<h5 id="LocalVariableTable属性"><a href="#LocalVariableTable属性" class="headerlink" title="LocalVariableTable属性"></a>LocalVariableTable属性</h5><p>存在于Code属性中，方法中的局部变量与源代码中的局部变量之间的对应关系。</p>
+<div align="center"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/LocalVariableTable%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84.jpg" width="500" height="400" alt="" aligh="center/"><br>   </div>
+
+<ul>
+<li>start_pc：局部变量的作用域的起始字节码偏移量</li>
+<li>length：局部变量的作用域的大小——start_pc 到start_pc+length</li>
+<li>name_index：局部变量的变量名</li>
+<li>descriptor_index：局部变量的描述符</li>
+<li>index：该方法被执行时，局部变量在栈帧中局部变量表中的位置</li>
+</ul>
+<h5 id="Exceptions属性"><a href="#Exceptions属性" class="headerlink" title="Exceptions属性"></a>Exceptions属性</h5><p>method_info中的attributes中。描述的是<code>方法声明</code>的可能会抛出的异常。</p>
+<div align="center"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/Exceptions%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84.jpg" width="500" height="400" alt="" aligh="center/"><br>   </div>
+
+<ul>
+<li>number_of_exceptions：</li>
+<li>exceptions_index_table：number_of_exceptions个，每一个指向一个常量池中的CONSTANT_Class_info，描述了一个被抛出的异常的类型</li>
+</ul>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>知道方法是如何表示的， 字段是如何表示的， 继承是如何表示的 ， 方法体是如何表示的， 等等。 所有源文件中的东西， 都会在class文件中有相应的描述形式</p>
+<div align="center"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/method_info%E6%89%80%E6%9C%89%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84%E5%9B%BE.jpg" width="500" height="400" alt="" aligh="center/"><br>   </div>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>万一有人支持呢？￣ω￣=</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Tristan-Hou 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Tristan-Hou 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/虚拟机/" rel="tag"># 虚拟机</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/07/Android逆向分析笔记(2)/" rel="next" title="Android逆向分析笔记(2)">
+                <i class="fa fa-chevron-left"></i> Android逆向分析笔记(2)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/14/dex文件结构/" rel="prev" title="dex文件结构">
+                dex文件结构 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar-me.jpg"
+                alt="Tristan-Hou" />
+            
+              <p class="site-author-name" itemprop="name">Tristan-Hou</p>
+              <p class="site-description motion-element" itemprop="description">Forever has turned out to be too long!</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/Tristan-Hou" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:houjh123@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.douban.com/people/47191252/" target="_blank" title="豆瓣">
+                    
+                      <i class="fa fa-fw fa-circle-o"></i>豆瓣</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/hou-tristan-77" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-globe"></i>
+                相关链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://mxplayerdownload.co/" title="MXPlayer" target="_blank">MXPlayer</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java类文件结构"><span class="nav-number">1.</span> <span class="nav-text">Java类文件结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#class文件中的数据项："><span class="nav-number">1.1.</span> <span class="nav-text">class文件中的数据项：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#魔数：magic"><span class="nav-number">1.2.</span> <span class="nav-text">魔数：magic</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#版本号：minor-major-version"><span class="nav-number">1.3.</span> <span class="nav-text">版本号：minor/major_version</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常量池："><span class="nav-number">1.4.</span> <span class="nav-text">常量池：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常量池数据项："><span class="nav-number">1.4.1.</span> <span class="nav-text">常量池数据项：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CONSTANT-Utf8-info"><span class="nav-number">1.4.2.</span> <span class="nav-text">CONSTANT_Utf8_info</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CONSTANT-NameAndType"><span class="nav-number">1.4.3.</span> <span class="nav-text">CONSTANT_NameAndType</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CONSTANT-Integer-info"><span class="nav-number">1.4.4.</span> <span class="nav-text">CONSTANT_Integer_info</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CONSTANT-Float-info"><span class="nav-number">1.4.5.</span> <span class="nav-text">CONSTANT_Float_info</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CONSTANT-Long-info"><span class="nav-number">1.4.6.</span> <span class="nav-text">CONSTANT_Long_info</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CONSTANT-Double-info"><span class="nav-number">1.4.7.</span> <span class="nav-text">CONSTANT_Double_info</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CONSTANT-String-info"><span class="nav-number">1.4.8.</span> <span class="nav-text">CONSTANT_String_info</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CONSTANT-Class-info"><span class="nav-number">1.4.9.</span> <span class="nav-text">CONSTANT_Class_info</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CONSTANT-Fieldref-info"><span class="nav-number">1.4.10.</span> <span class="nav-text">CONSTANT_Fieldref_info</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CONSTANT-Methodref-info"><span class="nav-number">1.4.11.</span> <span class="nav-text">CONSTANT_Methodref_info</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CONSTANT-InterfaceMethodref-info"><span class="nav-number">1.4.12.</span> <span class="nav-text">CONSTANT_InterfaceMethodref_info</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#访问标志"><span class="nav-number">1.5.</span> <span class="nav-text">访问标志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类索引"><span class="nav-number">1.6.</span> <span class="nav-text">类索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#父类索引"><span class="nav-number">1.7.</span> <span class="nav-text">父类索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接口索引集合"><span class="nav-number">1.8.</span> <span class="nav-text">接口索引集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字段表集合"><span class="nav-number">1.9.</span> <span class="nav-text">字段表集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法表集合"><span class="nav-number">1.10.</span> <span class="nav-text">方法表集合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#属性表集合"><span class="nav-number">1.11.</span> <span class="nav-text">属性表集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#几个重要的属性"><span class="nav-number">1.11.1.</span> <span class="nav-text">几个重要的属性</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SourceFile属性："><span class="nav-number">1.11.1.1.</span> <span class="nav-text">SourceFile属性：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#InnerClasses属性"><span class="nav-number">1.11.1.2.</span> <span class="nav-text">InnerClasses属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Synthetic属性"><span class="nav-number">1.11.1.3.</span> <span class="nav-text">Synthetic属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ConstantValue属性"><span class="nav-number">1.11.1.4.</span> <span class="nav-text">ConstantValue属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Deprecated属性"><span class="nav-number">1.11.1.5.</span> <span class="nav-text">Deprecated属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Code属性"><span class="nav-number">1.11.1.6.</span> <span class="nav-text">Code属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#LineNumberTable属性"><span class="nav-number">1.11.1.7.</span> <span class="nav-text">LineNumberTable属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#LocalVariableTable属性"><span class="nav-number">1.11.1.8.</span> <span class="nav-text">LocalVariableTable属性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Exceptions属性"><span class="nav-number">1.11.1.9.</span> <span class="nav-text">Exceptions属性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最后"><span class="nav-number">1.12.</span> <span class="nav-text">最后</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tristan-Hou</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/three/three.min.js"></script>
+
+  
+  <script type="text/javascript" src="/lib/three/canvas_sphere.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'OMklXdnuEcFRnGFEsH32d0y5-gzGzoHsz',
+        app_key: 'pi6DP5cWR2YlAREJhI43Id6J',
+        placeholder: '欢迎一起讨论~'
+    });
+  </script>
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.3"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("OMklXdnuEcFRnGFEsH32d0y5-gzGzoHsz", "pi6DP5cWR2YlAREJhI43Id6J");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

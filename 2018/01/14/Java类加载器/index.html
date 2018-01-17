@@ -112,7 +112,7 @@
 
 
 
-  <meta name="keywords" content="Dalvik虚拟机," />
+  <meta name="keywords" content="Class Loader," />
 
 
 
@@ -125,24 +125,20 @@
 
 
 
-<meta name="description" content="最近在读《Android软件安全与逆向分析》，虽然不从事逆向研究的工作，但作为一名Android开发者，觉得了解一下相关知识还是有必要的。因此，这里记录下该书所阐述的主要知识点，方便记忆和理解。">
-<meta name="keywords" content="Dalvik虚拟机">
+<meta name="description" content="类的数据从class文件加载到内存，并对数据进行校验、解析和初始化，形成可以被虚拟机直接使用的java类型，这就是类加载机制">
+<meta name="keywords" content="Class Loader">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android逆向分析笔记(1)">
-<meta property="og:url" content="http://yoursite.com/2018/01/01/Android逆向分析笔记(1)/index.html">
+<meta property="og:title" content="Java类加载器">
+<meta property="og:url" content="http://yoursite.com/2018/01/14/Java类加载器/index.html">
 <meta property="og:site_name" content="Tristan的博客">
-<meta property="og:description" content="最近在读《Android软件安全与逆向分析》，虽然不从事逆向研究的工作，但作为一名Android开发者，觉得了解一下相关知识还是有必要的。因此，这里记录下该书所阐述的主要知识点，方便记忆和理解。">
+<meta property="og:description" content="类的数据从class文件加载到内存，并对数据进行校验、解析和初始化，形成可以被虚拟机直接使用的java类型，这就是类加载机制">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/20151231114022450.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/1514813806959.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/1514822513334.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/1514822614888.jpg">
-<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/0_1315661784a77A.gif">
-<meta property="og:updated_time" content="2018-01-07T13:24:06.545Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.jpg">
+<meta property="og:updated_time" content="2018-01-17T16:31:44.258Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android逆向分析笔记(1)">
-<meta name="twitter:description" content="最近在读《Android软件安全与逆向分析》，虽然不从事逆向研究的工作，但作为一名Android开发者，觉得了解一下相关知识还是有必要的。因此，这里记录下该书所阐述的主要知识点，方便记忆和理解。">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/20151231114022450.png">
+<meta name="twitter:title" content="Java类加载器">
+<meta name="twitter:description" content="类的数据从class文件加载到内存，并对数据进行校验、解析和初始化，形成可以被虚拟机直接使用的java类型，这就是类加载机制">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.jpg">
 
 
 
@@ -172,13 +168,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/01/01/Android逆向分析笔记(1)/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/01/14/Java类加载器/"/>
 
 
 
 
 
-  <title>Android逆向分析笔记(1) | Tristan的博客</title>
+  <title>Java类加载器 | Tristan的博客</title>
   
 
 
@@ -372,7 +368,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/01/Android逆向分析笔记(1)/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/14/Java类加载器/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Tristan-Hou">
@@ -389,7 +385,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Android逆向分析笔记(1)</h1>
+          <h1 class="post-title" itemprop="name headline">Java类加载器</h1>
         
 
         <div class="post-meta">
@@ -401,8 +397,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-01T21:04:55+08:00">
-                2018-01-01
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-14T23:20:40+08:00">
+                2018-01-14
               </time>
             
 
@@ -424,8 +420,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
                   </a>
                 </span>
 
@@ -441,7 +437,7 @@
 
           
           
-             <span id="/2018/01/01/Android逆向分析笔记(1)/" class="leancloud_visitors" data-flag-title="Android逆向分析笔记(1)">
+             <span id="/2018/01/14/Java类加载器/" class="leancloud_visitors" data-flag-title="Java类加载器">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -468,7 +464,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  2,056
+                  2,857
                 </span>
               
 
@@ -484,7 +480,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  8
+                  11
                 </span>
               
             </div>
@@ -505,178 +501,290 @@
       
 
       
-        <p>最近在读《Android软件安全与逆向分析》，虽然不从事逆向研究的工作，但作为一名Android开发者，觉得了解一下相关知识还是有必要的。因此，这里记录下该书所阐述的主要知识点，方便记忆和理解。<br><a id="more"></a></p>
-<h2 id="Dalvik虚拟机与Java虚拟机"><a href="#Dalvik虚拟机与Java虚拟机" class="headerlink" title="Dalvik虚拟机与Java虚拟机"></a>Dalvik虚拟机与Java虚拟机</h2><h3 id="区别："><a href="#区别：" class="headerlink" title="区别："></a>区别：</h3><ol>
-<li>Java： 代码-编译-java字节码-class文件，虚拟机解码class文件<br>Dalvik：java字节码-Dalvik字节码-Dex，虚拟机解释Dex文件</li>
-<li><p>Dalvik文件体积更小</p>
+        <p>类的数据从class文件加载到内存，并对数据进行<code>校验</code>、<code>解析</code>和<code>初始化</code>，形成可以被虚拟机直接使用的java类型，这就是类加载机制<br><a id="more"></a><br>加载、链接、初始化都在运行期完成，增加了一些内存开销，但是提高了灵活性（面向接口编程，运行时才指定其实际的实现类；本地应用程序从网络流加载一个二进制流程序代码运行）</p>
+<h2 id="类加载时机"><a href="#类加载时机" class="headerlink" title="类加载时机"></a>类加载时机</h2><p>生命周期：</p>
+<div align="center"><br>    <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.jpg" width="500" height="200" alt="" align="center"><br></div>
+
+<p>加载-验证-准备-解析-初始化-使用-卸载，其中验证-准备-解析统称为连接。</p>
+<p>初始化：以下5条被称为类主动引用，会触发初始化（其他任何方式引用类都不会初始化）</p>
 <ul>
-<li>dx工具将java字节码-Dalvik字节码</li>
-<li>dx工具对java文件重新排序，消除类文件中的冗余信息</li>
-<li>例如：<ul>
-<li>多个类文件相互引用，被引用的类文件中的方法签名会复制到引用类文件中;</li>
-<li>常量字符串在多个类中也会被重复引用</li>
-</ul>
-</li>
-<li>dx工具分解常量池，所有文件共享一个常量池</li>
-</ul>
-<p>class文件结构:<br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/20151231114022450.png" alt=""></p>
-</li>
-</ol>
-<p> <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/1514813806959.jpg" alt=""></p>
-<ol>
-<li><p>Java: 基于栈架构，需要频繁读写数据<br>Dalvik：寄存器架构，数据访问通过寄存器直接传递（lua的VM也是寄存器实现)</p>
-<ul>
-<li>无论是栈虚拟机，还是寄存器虚拟机，都要：<ul>
-<li>将源码编译为VM指定的字节码</li>
-<li>包含操作数，指令(处理操作数运算)，操作数数据结构</li>
-<li>一个为所有函数操作的调用栈</li>
-<li>指向下一条将要执行的指令位置的指令指针（PC计数器)——类似ARM架构cpu的PC寄存器与x86架构cpu的IP寄存器</li>
-<li>操控指令的虚拟CPU<ul>
-<li>根据PC计数器获取下一条指令</li>
-<li>解析指令的具体含义(+/-/*/‘/等)</li>
-<li>执行指令</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>注意：<ul>
-<li>两种虚拟机都一个PC计数器和调用栈：<ul>
-<li>Java：记录方法的调用，调用方法压入一帧，方法完成弹出。每一帧包括局部变量区(方法参数、局部变量)和求职栈(求值中间结果、别的方法参数)</li>
-<li>Dalvik: 调用栈只维护一个寄存器列表</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>示例代码：</p>
-<pre><code>public class Hello {
-    public int foo(int a, int b) {
-        return (a + b) * (a - b);
+<li>使用new、读取或设置一个累的静态字段、调用一个类静态方法时，会生成<code>new</code>、<code>getstatic</code>、<code>putstatic</code>、<code>invokestatic</code>这四条字节码指令 </li>
+<li>反射</li>
+<li>初始化一个类，先初始化其父类</li>
+<li>虚拟机启动时，会先初始化执行包含<code>main()</code>的那个类</li>
+<li><p>jdk 1.7 动态语言支持，如果java.lang.invoke.MethodHandle实例最后解析结果REF_getstatic、REF_putstatic、REF_invokestatic方法句柄，并且这个方法句柄对应的类没有进行过初始化，需先触发初始化</p>
+<pre><code>//被动使用：子类引用父类静态字段，不会初始化子类
+public class SuperClass {
+    static {
+        System.out.println(&quot;SuperClass init!&quot;);
     }
-    public static void main(String[] argc) {
-        Hello hello = new Hello();
-        System.out.println(hello.foo(5, 3));
+    public static int value = 123;
+}
+
+public class SubClass extends SuperClass {
+    static {
+        System.out.println(&quot;SubClass init!&quot;);
     }
 }
-</code></pre><p>dx –dex –output=Hello.dex Hello.class可生成dex文件<br>javap -c -classpath . Hello查看foo的Java字节码：<br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/1514822513334.jpg" alt=""><br>每条指令占1个字节，共8字节。<br>dexdump查看foodalvik字节码：<br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/1514822614888.jpg" alt=""></p>
-<ul>
-<li>java虚拟机：更多的指令、更多的cpu消耗、更具可移植性</li>
-<li>Dalvik：更多的指令空间、数据缓冲更易失效、更有利于进行AOT（ahead-of-time）优化（相对JIT）</li>
+
+public class NotInitialization {
+    public static void main(String[] args) {
+        System.out.println(SubClass.value);
+    }
+}
+
+//-----------------------------------------------
+// SuperClass init!
+</code></pre><p>  静态字段，只有直接定义这个字段的类才会被初始化。</p>
+<pre><code>public class  NotInitialization {
+    public static void main(String[] args) {
+        SuperClass[] sca = new SuperClass[10];
+    }
+}
+
+//-----------------------------------------------
+// no output.
+</code></pre><p>  但其实虚拟机为我们创建了一个数组对象[LxxxxSuperClass，并初始化  </p>
+<pre><code>public class ConstClass {
+    static {
+        System.out.println(&quot;ConstClass init!&quot;);
+    }
+    public static final String HELLOWORLD = &quot;hello world&quot;;
+}
+
+public class  NotInitialization {
+    public static void main(String[] args) {
+        System.out.println(ConstClass. HELLOWORLD);
+    }
+}
+
+//-----------------------------------------------
+// hello world
+</code></pre><p> 常量在编译阶段会存入调用累的常量池里。</p>
+</li>
 </ul>
+<h2 id="类加载过程"><a href="#类加载过程" class="headerlink" title="类加载过程"></a>类加载过程</h2><h3 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h3><ol>
+<li>加载阶段，虚拟机需要完成3件事：<ul>
+<li>通过一个类的全限定名来获取定义此类的二进制字节流<ul>
+<li>从zip包读取——JAR、EAR、WAR格式基础</li>
+<li>网络中获取——Applet</li>
+<li>运行时计算生成——动态代理技术，java.lang.reflect.Proxy</li>
+<li>其他文件生成——JSP（JSP文件生成对应的CLass类）</li>
+<li>数据库读取</li>
+</ul>
+</li>
+<li>将这个字节流所代表的静态存储结构转化为方法区运行时数据结构<ul>
+<li>将对象类型信息存储在方法区</li>
+<li>类全限定名</li>
+<li>当前类直接弗雷全限定名</li>
+<li>这个类的接口类型、类类型、枚举类型</li>
+<li>类的访问修饰符信息</li>
+<li>当前类型的超接口全限定名</li>
+<li>当前类型的常量池</li>
+<li>字段信息</li>
+<li>方法信息</li>
+<li>根据以上信息可以创建对象</li>
+</ul>
+</li>
+<li>内存生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口</li>
+</ul>
+</li>
+<li>非数组类可以使用自定义、系统的加载器加载；数组类本身不通过类加载器加载，由虚拟机直接创建</li>
+</ol>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>连接阶段第一步，确保class文件中字节流包含的信息符合当前虚拟机要求（任何途径都可以生成class文件，并不一定要求用java编译，因此其他语言可能会做到某些java语言做不到的事情，危害虚拟机系统安全）。验证阶段主要完成：</p>
+<ul>
+<li>文件格式验证：字节流符合class文件规范<ul>
+<li>是否以魔数0xCAFFBABE开头</li>
+<li>主、次版本号是否在当前虚拟机处理范围内</li>
+<li>常量池始终是否有不支持类型</li>
+<li>……</li>
+</ul>
+</li>
+<li>元数据验证：对字节码描述的信息进行语义分析，以保证其描述的信息符合Java语言规范的要求<ul>
+<li>是否有父类（除了java.lang.Object，所有类都有父类）</li>
+<li>父类是否继承了不允许继承的类（final修饰）</li>
+<li>是否实现了父类或接口的抽象方法</li>
+<li>类中字段、方法是否与父类冲突矛盾（覆盖父类final字段、重载了方法，但返回值类型不同等）</li>
+</ul>
+</li>
+<li>字节码验证：通过数据流和控制流分析，确定程序语义是合法的、符合逻辑的，主要对类的方法体进行校验分析<ul>
+<li>确保任意时刻操作数栈数据类型与指令代码序列配合工作，不会出现类似操作数栈放了int类型数据，却在使用时按long类型加载</li>
+<li>跳转指令不会跳出方法体外的字节码指令上</li>
+<li>类型转换有效——子类转父类，父类转子类非法等</li>
+</ul>
+</li>
+<li>引用符号验证：确保解析动作能正确执行<ul>
+<li>符号引用中通过字符串描述的全限定名是否能找到对应的类</li>
+<li>指定类中是否存在符合方法的字段描述符以及简单名称所描述的方法和字段</li>
+<li>符号引用中的类、字段、方法的访问性是否可被当前类访问<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3>准备阶段是为类变量分配内存并设置类变量初始值的阶段，这些变量所使用的内存都将在方法区中进行分配。</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>这时候进行的内存分配仅包括类变量（static变量），不包括实例变量，实例变量将会在对象实例化时随着对象一起分配在堆中。</li>
+<li><p>这里的初始值<code>通常情况</code>是数据类型的零值：</p>
+<pre><code>public static int value = 123;
+</code></pre><p>value在准备阶段过后初始值为0，而不是123。此时尚未开始执行任何java方法，只有在初始化阶段，执行虚拟机为static构造的<code>&lt;clinit&gt;()</code>方法后，通过指令<code>putstatic</code>将123赋值给value</p>
+</li>
+<li><p>有“通常情况”，就有<code>特殊情况</code>。如果类字段的字段属性表中存在ConstantValue属性，那么在准备阶段value就会被初始化为指定值：</p>
+<pre><code>public static final int value = 123;
+</code></pre><p>由于final的修饰，class文件中value会带有ConstantValue属性。</p>
 </li>
 </ol>
-<h3 id="Dalvik寄存器"><a href="#Dalvik寄存器" class="headerlink" title="Dalvik寄存器"></a>Dalvik寄存器</h3><ul>
-<li>ARM架构：Dalvik部分寄存器映射到ARM寄存器上，部分通过调用栈模拟</li>
-<li>32位寄存器，64位通过连续的两个寄存器实现</li>
-<li>根据Dalvik指令表，一共有2的16次方，0~65535个寄存器</li>
-<li>每个虚拟机为一个进程维护一个调用栈，每个函数在函数头使用.registers指令指定用到的寄存器数目，虚拟机为其分配占空间，模拟寄存器。</li>
-</ul>
-<h2 id="Dalvik虚拟机特性"><a href="#Dalvik虚拟机特性" class="headerlink" title="Dalvik虚拟机特性"></a>Dalvik虚拟机特性</h2><h3 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h3><ul>
-<li><p>内存分类：Java Object Heap、Bitmap Memory、Native Heap</p>
+<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>解析阶段是虚拟机将常量池内的符号引用替换为直接引用的过程。解析动作主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符7类符号引用进行。</p>
 <ul>
-<li>Java Object Heap：<ul>
-<li>Java <code>new</code>出来的对象都存在这里。</li>
-<li>Xms和Xmx分别控制最大/小值</li>
-<li>为了避免Dalvik运行时不断调整此Heap大小而影响性能，一般让Xms=Xmx</li>
-<li>ActivityManager.getMemoryClass获得该值。这个Java Object Heap就是平日所说的<code>Android应用程序进程能够使用的最大内存</code></li>
+<li>符号引用：一组符合描述所引用的目标，只要使用时无歧义的定位到目标，可以是任何形式的字面量。引用的目标并不一定已经加载到内存中。</li>
+<li>直接引用：直接指向目标的指针、相对偏移量或一个能简介定位到目标的句柄。如果有了直接引用，那么引用目标一定已经在内存在存在</li>
 </ul>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>到了初始化阶段，才真正开始执行类中定义的java程序代码。执行类构造器<clinit>()方法，初始化类变量和其他资源。</clinit></p>
+<ol>
+<li><p><clinit>()方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块static{}中的语句合并产生的，编译器收集的顺序是由语句在源文件中出现的顺序所决定的，静态语句块只能访问到定义在静态语句块之前的变量，定义在它之后的变量，在前面的静态语句块可以赋值，但是不能访问。</clinit></p>
+<pre><code>public class Test {
+    static {
+        i=0;
+        System.out.println(i);//这句编译器会报错：Cannot reference a field before it is defined（非法向前应用）
+    }
+    static int i=1;
+}
+</code></pre></li>
+<li><p>虚拟机会自动保证优先调用父类的<clinit>()方法，因此弗雷中的静态语句块优先于子类的变量赋值操作</clinit></p>
+<pre><code>static class Parent {
+    public static int A =1;
+    static {
+        A = 2;
+    }
+}
+
+static class Sub extends Parent {
+    public static int B = A;
+}
+
+public static void main(String[] args) {
+    System.out.println(Sub.B);
+}
+
+//-------------------------------------------
+// 2
+</code></pre></li>
+<li><p>接口的<clinit>()不需要先执行父类的<clinit>()方法，只有当父接口中定义的变量使用时，父接口才会初始化。接口的实现类在初始化时也一样不会执行接口的<clinit>()</clinit></clinit></clinit></p>
 </li>
-</ul>
-<p>代码：</p>
-<pre><code>public class ActivityManager { 
-/** 
-* Return the approximate per-application memory class of the current 
-* device.  This gives you an idea of how hard a memory limit you should 
-* impose on your application to let the overall system work best.  The 
-* returned value is in megabytes; the baseline Android memory class is 
-* 16 (which happens to be the Java heap limit of those devices); some 
-* device with more memory may return 24 or even higher numbers. */
-      public int getMemoryClass() {  
-          return staticGetMemoryClass();  
-      } 
-     /** @hide */  
-      static public int staticGetMemoryClass() {  
-      // Really brain dead right now -- just take this from the configured  
-      // vm heap size, and assume it is in megabytes and thus ends with &quot;m&quot;.  
-          String vmHeapSize = SystemProperties.get(&quot;dalvik.vm.heapsize&quot;, &quot;16m&quot;);  
-          return Integer.parseInt(vmHeapSize.substring(0, vmHeapSize.length()-1)); 
+<li><p>虚拟机会保证一个类的<clinit>()方法在多线程环境中被正确的加锁、同步，如果多个线程同时去初始化一个类，那么只会有一个线程去执行这个类的<clinit>()方法，其他线程都需要阻塞等待，直到活动线程执行<clinit>()方法完毕。如果在一个类的<clinit>()方法中有好事很长的操作，就可能造成多个线程阻塞，在实际应用中这种阻塞往往是隐藏的</clinit></clinit></clinit></clinit></p>
+<pre><code>package jvm.classload;
+public class DealLoopTest{
+    static class DeadLoopClass{
+        static{
+               if(true){
+                   System.out.println(Thread.currentThread()+&quot;init DeadLoopClass&quot;);
+               while(true){}
+        }
+    }
+
+    public static void main(String[] args){
+        Runnable script = new Runnable(){
+           public void run(){
+              System.out.println(Thread.currentThread()+&quot; start&quot;);
+              DeadLoopClass dlc = new DeadLoopClass();
+              System.out.println(Thread.currentThread()+&quot; run over&quot;);
+          }
+       };
+       Thread thread1 = new Thread(script);
+       Thread thread2 = new Thread(script);
+       thread1.start();
+       thread2.start();
+     }
+}
+
+//-----------------------------------------------
+//Thread[Thread-0,5,main] start
+//Thread[Thread-1,5,main] start
+//Thread[Thread-0,5,main]init DeadLoopClass
+</code></pre><p> 需要注意的是，其他线程虽然会被阻塞，但如果执行<clinit>()方法的那条线程退出<clinit>()方法后，其他线程唤醒之后不会再次进入<clinit>()方法。同一个类加载器下，一个类型只会初始化一次。</clinit></clinit></clinit></p>
+<pre><code>static{
+    System.out.println(Thread.currentThread() + &quot;init DeadLoopClass&quot;);
+    try{
+        TimeUnit.SECONDS.sleep(10);
+    }catch (InterruptedException e){
+        e.printStackTrace();
+    }
+}
+
+//---------------------------------------------
+//Thread[Thread-0,5,main] start
+//Thread[Thread-1,5,main] start
+//Thread[Thread-1,5,main]init DeadLoopClass (之后sleep 10s)
+//Thread[Thread-1,5,main] run over
+//Thread[Thread-0,5,main] run over
+</code></pre></li>
+</ol>
+<h2 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h2><h3 id="类与类加载器"><a href="#类与类加载器" class="headerlink" title="类与类加载器"></a>类与类加载器</h3><p>只有在两个类是由同一个类加载器加载的前提下，才有意义；否则，即使两个类来源于同一个class文件，被同一个虚拟机加载，只要加载它们的类加载器不同，就一定不相等（equals()/isInstance()等）</p>
+<h3 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h3><ol>
+<li>三种类加载器：启动类加载器、扩展类加载器、应用程序类加载器</li>
+<li>类加载器先将加载请求委派给父类加载器，只有父类加载器反馈自己无法完成加载请求，才由子类加载器加载</li>
+</ol>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><ul>
+<li><p>一道练习题：</p>
+<pre><code>package jvm.classload;
+public class StaticTest{
+
+    public static void main(String[] args){
+        staticFunction();
+    }
+
+    static StaticTest st = new StaticTest();
+
+    static{
+        System.out.println(&quot;1&quot;);
+    }
+
+    {
+        System.out.println(&quot;2&quot;);
+    }
+
+    StaticTest(){
+        System.out.println(&quot;3&quot;);
+        System.out.println(&quot;a=&quot;+a+&quot;,b=&quot;+b);
+    }
+
+    public static void staticFunction(){
+        System.out.println(&quot;4&quot;);
+    }
+
+    int a=110;
+    static int b =112;
+}
+</code></pre></li>
+<li><p>输出是多少？？？</p>
+</li>
+<li><p>先看一个简化代码：</p>
+<pre><code>public class Test {
+    public static void main(String[] args) {
+        func();
+    }
+    static Test st = new Test();
+    static void func(){}
 }  
 </code></pre><ul>
-<li>Bitmap Memory:<ul>
-<li>3.1之前，在Native Heap分配，但是同样算入Java Object Heap中，因此Bitmap+Java Object&lt;=Xmx</li>
-<li>3.1之后，直接放入Java Object Heap，接受Gc管理</li>
+<li>main调用，触发静态初始化</li>
+<li>初始化Test静态部分，遇到st成员</li>
+<li>st引用的是本类的实例</li>
+<li>开始实例化st变量（实例初始化嵌入到静态初始化流程中）</li>
+<li>st实例化之后，完成静态初始化剩下的工作</li>
+<li>看起来像是<code>实例初始化出现在了静态初始化之前</code></li>
 </ul>
 </li>
-<li>Native Heap：<ul>
-<li>malloc()分配。不收Gc限制。</li>
-<li>Android内部代码使用了大量<code>智能指针</code>避免内存泄漏</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="GC"><a href="#GC" class="headerlink" title="GC"></a>GC</h3><ul>
-<li>2.3之前：<ul>
-<li>Stop-the-world，垃圾收集线程在执行时，其它线程都停止</li>
-<li>Full heap collection，一次收集完全部的垃圾</li>
-<li>程序中止通常大于100ms</li>
-</ul>
-</li>
-<li>2.3之后：<ul>
-<li>Cocurrent，垃圾收集线程与其它线程是并发执行的</li>
-<li>Partial collection，一次可能只收集一部分垃圾</li>
-<li>程序中止通常都小于5ms</li>
+<li><p>答案：</p>
+<pre><code>2
+3
+a=110,b=0
+1
+4
+</code></pre></li>
+<li>why：<ul>
+<li>准备阶段，st=null，b=0；</li>
+<li>初始化阶段：执行构造器。限制性第一条静态语句 st = new StaticTest()，此后进行对象初始化，先初始化成员变量，再执行构造方法。因此，a赋值110，打印2，执行构造方法，打印3，a=110,b=0</li>
 </ul>
 </li>
 </ul>
-<p>Gc日志：</p>
-<pre><code>D/dalvikvm(9050): GC_CONCURRENT freed 2049K, 65% free 3571K/9991K, external 4703K/5261K, paused 2ms+2ms
-</code></pre><ul>
-<li>GC_CONCURRENT：GC原因</li>
-<li>2049K：总共回收的内存</li>
-<li>3571K/9991K：在9991K的Java Object Heap中，3571K正在使用的</li>
-<li>4703K/5261K：在5261K的External Memory中，4703K正在使用的</li>
-<li>2ms+2ms：垃圾收集造成的程序中止时间</li>
-</ul>
-<h3 id="JIT"><a href="#JIT" class="headerlink" title="JIT"></a>JIT</h3><ul>
-<li>运行时编译，可以有效优化代码，但是占用运行时。</li>
-<li>2-8原则：80%时间重复运行20%代码，因此只JIT这20%代码</li>
-<li>假设某种情况，并作出代码优化–这种假设成立，保持现状–假设不成立，调整策略–只要假设不成立的情况很少发生或不发生，就会获得巨大收益–Gambing</li>
-<li>例子：<ul>
-<li>Java的同步，Lock和Unlock操作是非常耗时的，多线程环境下需要这种操作</li>
-<li>但有些程序(同步块、同步函数)，很可能始终保持着单线程执行状态</li>
-<li>JIT采取一种Lazy Unlocking机制：<ul>
-<li>线程T1执行同步代码块C，先按照正常流程获取轻量级锁L1，线程T1的ID会记录在L1上</li>
-<li>当T1离开C时，并不释放L1</li>
-<li>当T1再次进入C，发现L1所有者就是自己，直接执行C</li>
-<li>此时另一个线程T2需要执行C，发现L1已经被T1占有</li>
-<li>JIT检查T1调用堆栈，查看T1是否还在执行C</li>
-<li>是，将轻量级锁L1转换为重量级锁L2，将L2状态设置为锁定，再让T2在L2上睡眠</li>
-<li>T1执行完C后，按正常流程释放L2，从而唤醒T2，执行C</li>
-<li>否，直接将L1所有者标记为T2，T2执行C</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>静态语言无法这么做。”从这个角度来看，我们就可以说，静态编译语言（如C++）并不一定比在虚拟机上执行的语言（如Java）快，这是因为后者可以有一种强大的武器叫做JIT”——罗升阳</li>
-<li><a href="http://blog.reverberate.org/2012/12/hello-jit-world-joy-of-simple-jits.html" target="_blank" rel="noopener">JIT实现原理简要介绍</a></li>
-</ul>
-<h3 id="NDK"><a href="#NDK" class="headerlink" title="NDK"></a>NDK</h3><h3 id="进程和线程管理"><a href="#进程和线程管理" class="headerlink" title="进程和线程管理"></a>进程和线程管理</h3><p>老罗看过Linux内核的几本书<a href="http://blog.csdn.net/luoshengyang/article/details/6557518" target="_blank" rel="noopener">老罗的Android学习之路</a><br><a href="https://dl.packetstormsecurity.net/papers/general/Abstract-Processor.pdf" target="_blank" rel="noopener">怎么实现一个虚拟的CPU</a></p>
-<h2 id="Android程序的安装流程"><a href="#Android程序的安装流程" class="headerlink" title="Android程序的安装流程"></a>Android程序的安装流程</h2><ol>
-<li>系统程序：开机时安装，没有安装界面。开机时启动PackageManagerService服务，扫描/system/app重新安装所有程序<ul>
-<li>Zygote进程–SystemServer组件–PackageManagerService：<br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/0_1315661784a77A.gif" alt=""><br>图片来源：<a href="http://blog.csdn.net/luoshengyang/article/details/6766010" target="_blank" rel="noopener">Android应用程序安装过程源代码分析</a></li>
-</ul>
-</li>
-<li>Android市场安装：网络安装，没有安装界面。</li>
-<li>Adb：没有安装界面</li>
-<li>SD卡：apk文件安装，有安装界面。调用Android系统软件包packageinstall.apk安装。<ul>
-<li>当点击apk，进入安装页面时，实际上就是启动了packageinstall.apk的PackageInstallerActivity，通过初始化PagcageManager和PackageParser.Packager对象，通过PackageUtil.getPackageInfo()解析程序包信息，主要解析Menifest.xml中的标签信息。失败，返回；成功，setContentView显示安装界面。</li>
-<li>点击安装按钮–startActivity–InstallAppProgress.class–PackageManager.installPackage()。这个方法最终通过PackageManagerService.java实现。总之，通过installPackage()，进行了程序安装权限验证，随后进行安装或替换。</li>
-<li>安装过程中会通过scanPackageLI()完成apk依赖库检测、签名验证、sharedUser的签名检查、更新Native库目录文件、组件名称检查等，这些都完成后，通过mInstaller.install()安装程序</li>
-<li>install()构造字符串“install name uid gid”–transaction()–通过socket发送install指令–/system/bin/installd(常驻内存)–install指令函数installd.c do_install() install()–创建包路径/创建库路径/创建包目录/设置包目录权限/创建库目录/设置库目录权限/设置库目录所有者/设置包目录所有者–socket回传结果–成功/失败</li>
-</ul>
-</li>
-</ol>
 
       
     </div>
@@ -723,7 +831,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Dalvik虚拟机/" rel="tag"># Dalvik虚拟机</a>
+            <a href="/tags/Class-Loader/" rel="tag"># Class Loader</a>
           
         </div>
       
@@ -736,8 +844,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/12/29/ffmpeg-1/" rel="next" title="音视频学习（1）：基础概念">
-                <i class="fa fa-chevron-left"></i> 音视频学习（1）：基础概念
+              <a href="/2018/01/14/dex文件结构/" rel="next" title="dex文件结构">
+                <i class="fa fa-chevron-left"></i> dex文件结构
               </a>
             
           </div>
@@ -745,10 +853,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/01/06/零零碎碎的知识点/" rel="prev" title="零零碎碎的知识点">
-                零零碎碎的知识点 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -935,7 +1039,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Dalvik虚拟机与Java虚拟机"><span class="nav-number">1.</span> <span class="nav-text">Dalvik虚拟机与Java虚拟机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#区别："><span class="nav-number">1.1.</span> <span class="nav-text">区别：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dalvik寄存器"><span class="nav-number">1.2.</span> <span class="nav-text">Dalvik寄存器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dalvik虚拟机特性"><span class="nav-number">2.</span> <span class="nav-text">Dalvik虚拟机特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#内存管理"><span class="nav-number">2.1.</span> <span class="nav-text">内存管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC"><span class="nav-number">2.2.</span> <span class="nav-text">GC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JIT"><span class="nav-number">2.3.</span> <span class="nav-text">JIT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NDK"><span class="nav-number">2.4.</span> <span class="nav-text">NDK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程和线程管理"><span class="nav-number">2.5.</span> <span class="nav-text">进程和线程管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android程序的安装流程"><span class="nav-number">3.</span> <span class="nav-text">Android程序的安装流程</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载时机"><span class="nav-number">1.</span> <span class="nav-text">类加载时机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载过程"><span class="nav-number">2.</span> <span class="nav-text">类加载过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#加载"><span class="nav-number">2.1.</span> <span class="nav-text">加载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#验证"><span class="nav-number">2.2.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#准备"><span class="nav-number">2.3.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析"><span class="nav-number">2.4.</span> <span class="nav-text">解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化"><span class="nav-number">2.5.</span> <span class="nav-text">初始化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#类加载器"><span class="nav-number">3.</span> <span class="nav-text">类加载器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#类与类加载器"><span class="nav-number">3.1.</span> <span class="nav-text">类与类加载器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#双亲委派模型"><span class="nav-number">3.2.</span> <span class="nav-text">双亲委派模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最后"><span class="nav-number">4.</span> <span class="nav-text">最后</span></a></li></ol></div>
             
 
           </div>
