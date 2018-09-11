@@ -158,7 +158,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/LocalVariableTable%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/Exceptions%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/method_info%E6%89%80%E6%9C%89%E5%B1%9E%E6%80%A7%E7%BB%93%E6%9E%84%E5%9B%BE.jpg">
-<meta property="og:updated_time" content="2018-01-14T11:02:09.644Z">
+<meta property="og:updated_time" content="2018-01-19T07:32:00.242Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java类文件结构">
 <meta name="twitter:description" content="本文主要记录Java中Class文件的结构。">
@@ -488,7 +488,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  4,725
+                  4,713
                 </span>
               
 
@@ -628,20 +628,118 @@
 <ol>
 <li>常量池中索引项从1开始，引用0的地方代表此处不引用任何常量池项</li>
 <li>常量池存两类常量：字面量、符号引用</li>
-<li><p>符号引用：</p>
-<ul>
+<li>符号引用：<ul>
 <li>类、接口全限定名：类似于java/lang/Object，用/不用.（java.lang.Object）</li>
-<li><p>字段名称和描述符：所有的类型在描述符中都有对应的字符或字符串来对应。   </p>
-<p>| 类型 | 对应字符或字符串 | 例子 |<br>|— | — |—|<br>|byte | B |—|<br>|char | C |—|<br>|double | D |—|<br>|float | F |—|<br>|int | I |—|<br>|long | J |—|<br>|short | S |—|<br>|boolean | Z |—|<br>|void | V |—|<br>|类、接口、枚举 | “L”+全限定名+“;” | Ljava/lang/Object;|<br>|数组 | n个“[”+元素类型字符/串| [[[Ljava/lang/Object; |<br>  float和boolean对应的不是F和B，历史原因。</p>
-</li>
-<li><p>方法名称和描述符：所有参数的类型列表和方法返回值——<code>(参数1类型参数2类型参数3类型 ...)返回值类型</code> 各个参数之间无空格</p>
-<p>  | 方法描述符 | 方法声明 |<br>  |— | — |<br>  |()I | int getSize()|<br>  |()Ljava/lang/String;|String toString()|<br>  |([Ljava/lang/String;)V|void main(String[] args)|<br>  | …. |<br>  |([BII)I | int read(byte[] b, int offm int len)|<br>  |()[[Ljava/lang/Object; | Object[][] getObjectArray() |</p>
-</li>
-<li><p>java没有<code>连接</code>步骤，是在需要一个class时候，由classloader加载class文件进行动态连接，从常量池里获取符号引用，创建类时解析、翻译到具体内存地址中。否则无法找到字段、方法对应的内存入口地址，无法被虚拟机使用</p>
-</li>
+<li>字段名称和描述符：所有的类型在描述符中都有对应的字符或字符串来对应。   </li>
 </ul>
 </li>
 </ol>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>对应字符或字符串</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>byte</td>
+<td>B</td>
+<td>—</td>
+</tr>
+<tr>
+<td>char</td>
+<td>C</td>
+<td>—</td>
+</tr>
+<tr>
+<td>double</td>
+<td>D</td>
+<td>—</td>
+</tr>
+<tr>
+<td>float</td>
+<td>F</td>
+<td>—</td>
+</tr>
+<tr>
+<td>int</td>
+<td>I</td>
+<td>—</td>
+</tr>
+<tr>
+<td>long</td>
+<td>J</td>
+<td>—</td>
+</tr>
+<tr>
+<td>short</td>
+<td>S</td>
+<td>—</td>
+</tr>
+<tr>
+<td>boolean</td>
+<td>Z</td>
+<td>—</td>
+</tr>
+<tr>
+<td>void</td>
+<td>V</td>
+<td>—</td>
+</tr>
+<tr>
+<td>类、接口、枚举</td>
+<td>“L”+全限定名+“;”</td>
+<td>Ljava/lang/Object;</td>
+</tr>
+<tr>
+<td>数组</td>
+<td>n个“[”+元素类型字符/串</td>
+<td>[[[Ljava/lang/Object;</td>
+</tr>
+</tbody>
+</table>
+<p>float和boolean对应的不是F和B，历史原因。</p>
+<ul>
+<li>方法名称和描述符：所有参数的类型列表和方法返回值——<code>(参数1类型参数2类型参数3类型 ...)返回值类型</code> 各个参数之间无空格</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>方法描述符</th>
+<th>方法声明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>()I</td>
+<td>int getSize()</td>
+</tr>
+<tr>
+<td>()Ljava/lang/String;</td>
+<td>String toString()</td>
+</tr>
+<tr>
+<td>([Ljava/lang/String;)V</td>
+<td>void main(String[] args)</td>
+</tr>
+<tr>
+<td>….</td>
+</tr>
+<tr>
+<td>([BII)I</td>
+<td>int read(byte[] b, int offm int len)</td>
+</tr>
+<tr>
+<td>()[[Ljava/lang/Object;</td>
+<td>Object[][] getObjectArray()</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>java没有<code>连接</code>步骤，是在需要一个class时候，由classloader加载class文件进行动态连接，从常量池里获取符号引用，创建类时解析、翻译到具体内存地址中。否则无法找到字段、方法对应的内存入口地址，无法被虚拟机使用</li>
+</ul>
 <h4 id="常量池数据项："><a href="#常量池数据项：" class="headerlink" title="常量池数据项："></a>常量池数据项：</h4><table>
 <thead>
 <tr>
@@ -716,15 +814,15 @@
 <li>常量池中所有的<code>字面量</code>几乎都是通过这个类型描述的，其他类型的常量池项只不过是对CONSTANT_Utf8_info的引用</li>
 <li>首位tag值为1，随后2个字节是字符串长度length，接下来是字符串的存储值:</li>
 </ul>
-<div align="center"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Utf8_info%E7%BB%93%E6%9E%84%E5%9B%BE.jpg" width="200" height="200" alt="CONSTANT_Utf8_info格式" align="center"><br>  </div>
+<div align="center"><br>  <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Utf8_info%E7%BB%93%E6%9E%84%E5%9B%BE.jpg" width="150" height="150" alt="CONSTANT_Utf8_info格式" align="center"><br>  </div>
 
 <p>  因为class中文件中方法、字段都要引用CONSTANT<em> Utf8</em> info，因此此类型最大长度就是java中方法、字段名称的最大长度——即：2的16次方65535，如果方法名、变量名超过该值，就无法编译<br>  如果存储的String为Hello：</p>
-   <div align="center"><br>   <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Utf8_info%E7%BB%93%E6%9E%84%E4%BE%8B%E5%AD%90.jpg" width="200" height="200" alt="" aligh="center/"><br>   </div>
+   <div align="center"><br>   <img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/CONSTANT_Utf8_info%E7%BB%93%E6%9E%84%E4%BE%8B%E5%AD%90.jpg" width="150" height="150" alt="" aligh="center/"><br>   </div>
 
 <ul>
 <li>可包括的字符串：<ul>
 <li>字符串常量：“Hello”等</li>
-<li>全限定名：当前类、接口、枚举、直接弗雷、实现或继承的接口、引用的类型</li>
+<li>全限定名：当前类、接口、枚举、直接父类、实现或继承的接口、引用的类型</li>
 <li>方法、字段名称：本类的、引用的</li>
 <li>方法、字段描述符：本类的、引用的</li>
 <li>当前class文件中属性相关字符串：属性信息attribute</li>
@@ -1130,7 +1228,7 @@ int getAge(){
 </li>
 </ul>
 <h3 id="字段表集合"><a href="#字段表集合" class="headerlink" title="字段表集合"></a>字段表集合</h3><ul>
-<li>fields_count：当前类中定义的字段的个数，包括静态字段，但不包括从父类集成的字段<ul>
+<li>fields_count：当前类中定义的字段的个数，包括静态字段，但不包括从父类继承的字段<ul>
 <li>编译器可能会自动添加某些字段，比如内部类拥有外部类的对象引用，所以class文件中字段数量可能多于源文件定义的数量</li>
 </ul>
 </li>
@@ -1475,7 +1573,7 @@ public class Person {
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1486,7 +1584,7 @@ public class Person {
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1497,7 +1595,7 @@ public class Person {
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

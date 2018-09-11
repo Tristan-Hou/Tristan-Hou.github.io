@@ -134,7 +134,7 @@
 <meta property="og:description" content="类的数据从class文件加载到内存，并对数据进行校验、解析和初始化，形成可以被虚拟机直接使用的java类型，这就是类加载机制">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.jpg">
-<meta property="og:updated_time" content="2018-01-17T16:31:44.258Z">
+<meta property="og:updated_time" content="2018-01-19T07:06:15.987Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java类加载器">
 <meta name="twitter:description" content="类的数据从class文件加载到内存，并对数据进行校验、解析和初始化，形成可以被虚拟机直接使用的java类型，这就是类加载机制">
@@ -616,10 +616,11 @@ public class  NotInitialization {
 <li>引用符号验证：确保解析动作能正确执行<ul>
 <li>符号引用中通过字符串描述的全限定名是否能找到对应的类</li>
 <li>指定类中是否存在符合方法的字段描述符以及简单名称所描述的方法和字段</li>
-<li>符号引用中的类、字段、方法的访问性是否可被当前类访问<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3>准备阶段是为类变量分配内存并设置类变量初始值的阶段，这些变量所使用的内存都将在方法区中进行分配。</li>
+<li>符号引用中的类、字段、方法的访问性是否可被当前类访问</li>
 </ul>
 </li>
 </ul>
+<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>准备阶段是为类变量分配内存并设置类变量初始值的阶段，这些变量所使用的内存都将在方法区中进行分配。</p>
 <ol>
 <li>这时候进行的内存分配仅包括类变量（static变量），不包括实例变量，实例变量将会在对象实例化时随着对象一起分配在堆中。</li>
 <li><p>这里的初始值<code>通常情况</code>是数据类型的零值：</p>
@@ -638,7 +639,7 @@ public class  NotInitialization {
 </ul>
 <h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>到了初始化阶段，才真正开始执行类中定义的java程序代码。执行类构造器<clinit>()方法，初始化类变量和其他资源。</clinit></p>
 <ol>
-<li><p><clinit>()方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块static{}中的语句合并产生的，编译器收集的顺序是由语句在源文件中出现的顺序所决定的，静态语句块只能访问到定义在静态语句块之前的变量，定义在它之后的变量，在前面的静态语句块可以赋值，但是不能访问。</clinit></p>
+<li><p>\<clinit>()方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块static{}中的语句合并产生的，编译器收集的顺序是由语句在源文件中出现的顺序所决定的，静态语句块只能访问到定义在静态语句块之前的变量，定义在它之后的变量，在前面的静态语句块可以赋值，但是不能访问。</clinit></p>
 <pre><code>public class Test {
     static {
         i=0;
@@ -647,7 +648,7 @@ public class  NotInitialization {
     static int i=1;
 }
 </code></pre></li>
-<li><p>虚拟机会自动保证优先调用父类的<clinit>()方法，因此弗雷中的静态语句块优先于子类的变量赋值操作</clinit></p>
+<li><p>虚拟机会自动保证优先调用父类的\<clinit>()方法，因此弗雷中的静态语句块优先于子类的变量赋值操作</clinit></p>
 <pre><code>static class Parent {
     public static int A =1;
     static {
@@ -666,9 +667,9 @@ public static void main(String[] args) {
 //-------------------------------------------
 // 2
 </code></pre></li>
-<li><p>接口的<clinit>()不需要先执行父类的<clinit>()方法，只有当父接口中定义的变量使用时，父接口才会初始化。接口的实现类在初始化时也一样不会执行接口的<clinit>()</clinit></clinit></clinit></p>
+<li><p>接口的\<clinit>()不需要先执行父类的\<clinit>()方法，只有当父接口中定义的变量使用时，父接口才会初始化。接口的实现类在初始化时也一样不会执行接口的\<clinit>()</clinit></clinit></clinit></p>
 </li>
-<li><p>虚拟机会保证一个类的<clinit>()方法在多线程环境中被正确的加锁、同步，如果多个线程同时去初始化一个类，那么只会有一个线程去执行这个类的<clinit>()方法，其他线程都需要阻塞等待，直到活动线程执行<clinit>()方法完毕。如果在一个类的<clinit>()方法中有好事很长的操作，就可能造成多个线程阻塞，在实际应用中这种阻塞往往是隐藏的</clinit></clinit></clinit></clinit></p>
+<li><p>虚拟机会保证一个类的\<clinit>()方法在多线程环境中被正确的加锁、同步，如果多个线程同时去初始化一个类，那么只会有一个线程去执行这个类的\<clinit>()方法，其他线程都需要阻塞等待，直到活动线程执行\<clinit>()方法完毕。如果在一个类的\<clinit>()方法中有好事很长的操作，就可能造成多个线程阻塞，在实际应用中这种阻塞往往是隐藏的</clinit></clinit></clinit></clinit></p>
 <pre><code>package jvm.classload;
 public class DealLoopTest{
     static class DeadLoopClass{
@@ -698,7 +699,7 @@ public class DealLoopTest{
 //Thread[Thread-0,5,main] start
 //Thread[Thread-1,5,main] start
 //Thread[Thread-0,5,main]init DeadLoopClass
-</code></pre><p> 需要注意的是，其他线程虽然会被阻塞，但如果执行<clinit>()方法的那条线程退出<clinit>()方法后，其他线程唤醒之后不会再次进入<clinit>()方法。同一个类加载器下，一个类型只会初始化一次。</clinit></clinit></clinit></p>
+</code></pre><p> 需要注意的是，其他线程虽然会被阻塞，但如果执行\<clinit>()方法的那条线程退出\<clinit>()方法后，其他线程唤醒之后不会再次进入\<clinit>()方法。同一个类加载器下，一个类型只会初始化一次。</clinit></clinit></clinit></p>
 <pre><code>static{
     System.out.println(Thread.currentThread() + &quot;init DeadLoopClass&quot;);
     try{
@@ -854,6 +855,10 @@ a=110,b=0
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/02/27/ffmpeg函数/" rel="prev" title="ffmpeg函数">
+                ffmpeg函数 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -935,7 +940,7 @@ a=110,b=0
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -946,7 +951,7 @@ a=110,b=0
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -957,7 +962,7 @@ a=110,b=0
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

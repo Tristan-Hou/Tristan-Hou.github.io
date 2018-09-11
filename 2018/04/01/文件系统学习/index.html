@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.jpg?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.jpg?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.jpg?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/favicon.jpg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Linux," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Tristan的博客" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="关于Linux文件系统的学习">
+<meta name="keywords" content="Linux">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件系统学习">
+<meta property="og:url" content="http://yoursite.com/2018/04/01/文件系统学习/index.html">
+<meta property="og:site_name" content="Tristan的博客">
+<meta property="og:description" content="关于Linux文件系统的学习">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/fs%20root.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/whats%20the%20best%20fs.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/fs%20structure1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/fs%20structure2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/inode.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/fs%20work.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/inode2.png">
+<meta property="og:updated_time" content="2018-04-19T04:35:14.253Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="文件系统学习">
+<meta name="twitter:description" content="关于Linux文件系统的学习">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/fs%20root.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: 'GNYY4UYPEN',
+      apiKey: 'ac2c5f44758cc76229d861ab965c9bb4',
+      indexName: 'MyBlog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"输入关键字进行搜索","hits_empty":"找不到关于“ ${query} ”的文章","hits_stats":"共找到 ${hits} 篇文章，花了 ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/01/文件系统学习/"/>
+
+
+
+
+
+  <title>文件系统学习 | Tristan的博客</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-111682587-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tristan的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Tristan-Hou</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/01/文件系统学习/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tristan-Hou">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar-me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tristan的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">文件系统学习</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-01T22:12:22+08:00">
+                2018-04-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/04/01/文件系统学习/" class="leancloud_visitors" data-flag-title="文件系统学习">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                  <span class="post-meta-divider">|</span>
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  4,836
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  17
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>关于Linux文件系统的学习<br><a id="more"></a></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>关于Linux-Kernel学习的8个知识点</p>
+<h3 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h3><ol>
+<li>(CPU）物理地址 + （内核)虚拟地址 —— 地址转换</li>
+<li>地址转换表：页表 —— 内存中，4K大小</li>
+</ol>
+<h3 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h3><p>管理内存地址，通过页表进行内存管理</p>
+<h3 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h3><ol>
+<li>Linux中的APi：用户态API、系统态API（内核）</li>
+<li>用户态API通过调用系统调用来调用系统态API，隔离作用</li>
+</ol>
+<h3 id="线程调度"><a href="#线程调度" class="headerlink" title="线程调度"></a>线程调度</h3><p>多线程系统需要管理如何何时互相调用、切换等操作，便引入线程调度概念。线程调度方式有三种方式:</p>
+<ol>
+<li>时间段轮询</li>
+<li>实时线程优先</li>
+<li>线程优先等级</li>
+</ol>
+<h3 id="同步与线程通讯"><a href="#同步与线程通讯" class="headerlink" title="同步与线程通讯"></a>同步与线程通讯</h3><ol>
+<li>同步线程通讯: 一个线程要求另一个线程完成某些任务，并且等待这个线程完成任务后，才继续执行;</li>
+<li>异步线程通讯: 不要求另一个线程完成某些任务，也不会等待</li>
+</ol>
+<h3 id="中断"><a href="#中断" class="headerlink" title="中断"></a>中断</h3><p>硬件角度，外部电路的电平信号</p>
+<h3 id="时钟与定时器管理"><a href="#时钟与定时器管理" class="headerlink" title="时钟与定时器管理"></a>时钟与定时器管理</h3><ol>
+<li>硬件角度看，时钟是一种中断电路, 专用于系统时间，也叫系统心跳；</li>
+<li>定时器是一种计数器</li>
+</ol>
+<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h3><p>Linux为了更好的跨平台性，使用了虚拟文件系统，屏蔽了物理文件系统（Ext4、yaffs2等）的差异</p>
+<h2 id="不同的文件系统"><a href="#不同的文件系统" class="headerlink" title="不同的文件系统"></a>不同的文件系统</h2><p>Linux启动时，第一个必须挂载的是根文件系统root；若系统不能从指定设备上挂载根文件系统，则系统会出错而退出启动。之后可以自动或手动挂载其他的文件系统。因此，一个系统中可以同时存在不同的文件系统。启动进程中文件系统的挂载是由 /etc/fstab 配置文件管理。</p>
+<ol>
+<li>基于FLASH的文件系统</li>
+<li>基于RAM的文件系统</li>
+<li>网络文件系统NFS (Network File System)</li>
+</ol>
+<p>Linux还支持逻辑的或伪文件系统(logical or pseudo file system)，例如procfs(proc文件系统)，用于获取系统信息，以及devfs(设备文件系统)和sysfs，用于维护设备文件。</p>
+<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/fs%20root.png" width="500" height="600" align="center/"><br></div>
+
+<p>粗体的目录组成了 root 文件系统的必需部分。也就是说，它们不能创建为一个分离的文件系统并且在开机时进行挂载。这是因为它们（特别是它们包含的内容）必须在系统启动的时候出现，从而系统才能正确启动。<br>非粗体的目录不需要在系统启动过程中出现，但会在之后挂载到 root 文件系统上，在开机阶段，它们为主机进行准备，从而执行有用的工作</p>
+<h3 id="What’s-the-best-File-System-for-my-Linux-install"><a href="#What’s-the-best-File-System-for-my-Linux-install" class="headerlink" title="What’s the best File System for my Linux install?"></a>What’s the best File System for my Linux install?</h3><div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/whats%20the%20best%20fs.jpg" width="500" height="250" align="center/"><br></div>
+
+<ul>
+<li>Ext4: Ext4 针对那些寻找超级可靠的基础环境或者那些只需要能工作就行的用户，几乎是所有 Linux 用户都会选择的文件系统;</li>
+<li>BtrFs：B树(B-tree)文件系统，是当前其他文件系统的新一代替代者，目前其处于开发中。有很多面向高级用户的杀手级特性；</li>
+<li>XFS：是一个高端文件系统，定位于速度和性能方面，并行IO出色。如果你有一台家庭服务器，而且你苦恼于如何部署存储环境，那么可以考虑下</li>
+</ul>
+<h2 id="文件系统体系结构"><a href="#文件系统体系结构" class="headerlink" title="文件系统体系结构"></a>文件系统体系结构</h2><ul>
+<li>Linux的思想：<a href="https://opensource.com/life/15/9/everything-is-a-file" target="_blank" rel="noopener">一切都是文件</a>，包括硬件设备。这样，用户就可以用读写文件的方式实现对硬件的访问</li>
+<li>若非文件，则为进程</li>
+</ul>
+<h3 id="什么是文件系统"><a href="#什么是文件系统" class="headerlink" title="什么是文件系统"></a>什么是文件系统</h3><ul>
+<li>文件系统： 是对一个存储设备上的数据和元数据进行组织的机制</li>
+<li><p>Linux文件系统实现为分层的体系结构，从而实现各个层级的的分离：</p>
+<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/fs%20structure1.png" width="500" height="300" align="center/"><br></div>
+
+</li>
+</ul>
+<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/fs%20structure2.png" width="500" height="300" align="center/"><br></div>
+
+<ul>
+<li>通过使用一组通用的API函数，Linux 可以在许多种存储设备上支持许多种文件系统：read 函数调用可以从指定的文件描述符读取一定数量的字节，它不了解文件系统的类型（ext4），也不了解文件系统所在的存储媒体（sata磁盘）</li>
+</ul>
+<h3 id="VFS层"><a href="#VFS层" class="headerlink" title="VFS层"></a>VFS层</h3><ol>
+<li>底层文件系统的主要接口</li>
+<li>用户态api通过系统调用调用内核态api，文件相关操作的系统回调函数，调用的就是VFS层的函数</li>
+<li>每个文件系统实现（比如 ext2、JFS 等等）导出一组通用接口，供 VFS 使用</li>
+<li>VFS提供的常用API：mount()、umount() … 、open()、close()… 、mkdir()</li>
+<li>VFS记录当前支持的文件系统（命令：cat /proc/filesystems)以及当前挂载的文件系统（mount -l）</li>
+</ol>
+<h3 id="文件系统层"><a href="#文件系统层" class="headerlink" title="文件系统层"></a>文件系统层</h3><p>不同的文件系统实现了VFS的这些函数。文件系统把文件读写命令转化为对磁盘LBA的操作，起了一个翻译和磁盘管理的作用</p>
+<h3 id="缓存层"><a href="#缓存层" class="headerlink" title="缓存层"></a>缓存层</h3><p>对磁盘LBA的读写数据缓存到这里，加速性能</p>
+<h3 id="块设备层"><a href="#块设备层" class="headerlink" title="块设备层"></a>块设备层</h3><p>块设备接口Block Device是用来访问磁盘LBA的层级，读写命令组合之后插入到命令队列，磁盘的驱动从队列读命令执行</p>
+<h3 id="磁盘驱动层"><a href="#磁盘驱动层" class="headerlink" title="磁盘驱动层"></a>磁盘驱动层</h3><p>磁盘的驱动程序把对LBA的读写命令转化为各自的协议</p>
+<h3 id="磁盘物理层"><a href="#磁盘物理层" class="headerlink" title="磁盘物理层"></a>磁盘物理层</h3><h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><h3 id="物理磁盘到文件系统"><a href="#物理磁盘到文件系统" class="headerlink" title="物理磁盘到文件系统"></a>物理磁盘到文件系统</h3><ul>
+<li>关于磁盘需要了解：</li>
+</ul>
+<ol>
+<li>硬盘有数个盘片，每盘片两个面，每个面一个磁头</li>
+<li>盘片被划分为多个扇形区域即扇区</li>
+<li>同一盘片不同半径的同心圆为磁道</li>
+<li>不同盘片相同半径构成的圆柱面即柱面</li>
+<li>公式： 存储容量＝磁头数×磁道（柱面）数×每道扇区数×每扇区字节数</li>
+<li>信息记录可表示为：××磁道（柱面），××磁头，××扇区</li>
+</ol>
+<ul>
+<li>Linux如何管理这些空间——将磁盘块分为以下三个部分：</li>
+</ul>
+<ol>
+<li>超级块：文件系统中第一个块被称为超级块。这个块存放文件系统本身的结构信息。比如，超级块记录了每个区域的大小，超级块也存放未被使用的磁盘块的信息</li>
+<li>inode表：超级块下一部分就是inode表。每个inode对应一个文件/目录结构，包含了一个文件长度、创建/修改时间、权限、所属关系、磁盘中位置等信息。一个文件系统维护了一个索引节点的数组，每个文件或目录都与索引节点数组中的唯一一个元素对应。系统给每个索引节点分配了一个号码，也就是该节点在数组中的索引号，称为索引节点号</li>
+<li>数据区：文件的内容保存在这个区域。磁盘上所有块的大小都一样。如果文件包含了超过一个块的内容，则文件内容会存放在多个磁盘块中</li>
+</ol>
+<ul>
+<li>Linux正统的文件系统(如ext2、3等)将硬盘分区时会划分出目录块、inode Table区块和data block数据区域</li>
+<li>一个文件由一个目录项、inode和数据区域块组成：</li>
+</ul>
+<ol>
+<li>目录项:包括文件名和inode节点号。</li>
+<li>inode包含文件的属性(如读写属性、owner等，以及指向数据块的指针)——inode里所包含的文件信息可以通过命令“stat filename”查看<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/inode.png" width="500" height="200" align="center/"><br></div></li>
+<li>数据区域块则是文件内容</li>
+</ol>
+<ul>
+<li>当查看某个文件时，会先从inode table中查出文件属性及数据存放点，再从数据块中读取数据<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/fs%20work.png" width="500" height="250" align="center/"><br></div>
+
+</li>
+</ul>
+<p>或</p>
+<div align="center"><br><img src="https://raw.githubusercontent.com/Tristan-Hou/MarkdownImg/master/res/inode2.png" width="500" height="250" align="center/"><br></div>
+
+<h3 id="创建一个文件的过程"><a href="#创建一个文件的过程" class="headerlink" title="创建一个文件的过程"></a>创建一个文件的过程</h3><ul>
+<li>命令行输入命令:who &gt; userlist</li>
+<li>文件系统中增加了一个存放命令who输出内容的新文件userlist</li>
+<li>文件主要有属性、内容以及文件名三项。内核将文件内容存放在数据区，文件属性存放在i-节点，文件名存放在目录中</li>
+<li>创建成功一个文件主要有以下四个步骤:<ol>
+<li>存储属性:也就是文件属性的存储，内核先找到一块空的i-节点。例如，内核找到i-节点号921130。内核把文件的信息记录其中。如文件的大小、文件所有者、和创建时间等</li>
+<li>存储数据:即文件内容的存储，由于该文件需要3个数据块。因此内核从自由块的列表中找到3个自由块。如600、200、992，内核缓冲区的第一块数据复制到块600，第二和第三分别复制到922和600</li>
+<li>记录分配情况:数据保存到了三个数据块中。所以必须要记录起来，以后再找到正确的数据。分配情况记录在文件的i-节点中的磁盘序号列表里。这3个编号分别放在最开始的3个位置</li>
+<li>添加文件名到目录:新文件的名字是userlist 内核将文件的入口(47,userlist)添加到目录文件里。文件名和i-节点号之间的对应关系将文件名和文件和文件的内容属性连接起来，找到文件名就找到文件的i-节点号，通过i-节点号就能找到文件的属性和内容</li>
+</ol>
+</li>
+</ul>
+<h3 id="创建一个目录的过程"><a href="#创建一个目录的过程" class="headerlink" title="创建一个目录的过程"></a>创建一个目录的过程</h3><ul>
+<li>mkdir创建目录</li>
+<li>目录也是文件</li>
+<li>创建过程和文件创建过程一样，只是第二步写的内容不同<ol>
+<li>系统找到空闲的i-节点号887220,写入目录的属性</li>
+<li>找到空闲的数据块1002来存储目录的内容，只是目录的内容比较特殊，包含文件名字列表，列表一般包含两个部分：i-节点号和文件名，这个列表其实也就是文件的入口，新建的目录至少包含三个目录”.”和”..”其中”.”指向自己，”..”指向上级目录，我们可以通过比较对应的i-节点号来验证,887270 对应着上级目录中的child对应的i-节点号</li>
+<li>记录分配情况。这个和创建文件完全一样</li>
+<li>添加目录的入口到父目录，即在父目录中的child入口</li>
+</ol>
+</li>
+<li>一般都说文件存放在某个目录中，其实目录中存入的只是文件在i-节点表的入口，而文件的内容则存储在数据区。我们一般会说“文件userlist在目录test中”,其实这意味着目录test中有一个指向i-节点921130的链接，这个链接所附加的文件名为userlist,这也可以这样理解：目录包含的是文件的引用，每个引用被称为链接。文件的内容存储在数据块。文件的属性被记录在一个被称为i-节点的结构中。i-节点的编号和文件名关联起来存在目录中。</li>
+</ul>
+<h3 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h3><ul>
+<li>文件都有文件名与数据，Linux上分成两个部分：用户数据 (user data) 与元数据 (metadata)</li>
+<li>元数据中的 inode 号，是文件的唯一标识而非文件名。文件名仅是为了方便人们的记忆和使用，系统或程序通过 inode 号寻找正确的文件数据块</li>
+</ul>
+<h4 id="硬链接创建过程"><a href="#硬链接创建过程" class="headerlink" title="硬链接创建过程"></a>硬链接创建过程</h4><ul>
+<li>若一个 inode 号对应多个文件名，则称这些文件为硬链接</li>
+<li>硬链接就是同一个文件使用了多个别名，可由命令link或ln创建</li>
+<li>硬链接特点：<ol>
+<li>文件有相同的 inode 及 data block</li>
+<li>只能对已存在的文件进行创建</li>
+<li>不能交叉文件系统进行硬链接的创建，不能跨文件系统</li>
+<li>不能对目录进行创建，只可对文件创建</li>
+<li>删除一个硬链接文件并不影响其他有相同 inode 号的文件</li>
+</ol>
+</li>
+<li>创建过程：<ol>
+<li>通过原文件的文件名找到文件的i-节点号</li>
+<li>添加文件名关联到目录，新文件的名字是mylink 内核将文件的入口(921130,mylink)添加到目录文件里——不需要写文件内容，仅仅关联文件名至目录，源文件连接数+1</li>
+</ol>
+</li>
+</ul>
+<h4 id="软链接创建过程"><a href="#软链接创建过程" class="headerlink" title="软链接创建过程"></a>软链接创建过程</h4><ul>
+<li>软连接与windows下的快捷方式类似</li>
+<li>若文件用户数据块中存放的内容是另一文件的路径名的指向，则该文件就是软连接</li>
+</ul>
+<h3 id="挂载"><a href="#挂载" class="headerlink" title="挂载"></a>挂载</h3><p>将一个文件系统与一个存储设备关联起来的过程称为挂装（mount）。</p>
+<ul>
+<li>文件系统中挂载文件系统：</li>
+</ul>
+<ol>
+<li>dd 命令创建一个指定大小的文件：dd if=/dev/zero of=file.img bs=1k count=10000  —— 10MB大小</li>
+<li>losetup 命令将一个循环设备与这个文件关联起来，让它看起来像一个块设备，而不是文件系统中的常规文件： losetup /dev/loop0 file.img  —— /dev/loop0表示file.img作为块设备</li>
+<li>mke2fs创建一个指定大小的新的 ext2 文件系统： mke2fs -c /dev/loop0 10000</li>
+<li>使用 mount 命令将循环设备（/dev/loop0）所表示的 file.img 文件挂载到挂载点 /mnt/point1： <ul>
+<li>mkdir /mnt/point1</li>
+<li>mount -t ext2 /dev/loop0 /mnt/point1</li>
+<li>ls /mnt/point1</li>
+</ul>
+</li>
+<li>还可以在这个文件系统中再次建立文件系统<ul>
+<li>d if=/dev/zero of=/mnt/point1/file.img bs=1k count=1000</li>
+<li>losetup /dev/loop1 /mnt/point1/file.img</li>
+<li>mke2fs -c /dev/loop1 1000</li>
+<li>mkdir /mnt/point2</li>
+<li>mount -t ext2 /dev/loop1 /mnt/point2</li>
+<li>ls /mnt/point2</li>
+<li>ls /mnt/point1</li>
+</ul>
+</li>
+</ol>
+<h3 id="文件的拷贝、剪切的底层过程"><a href="#文件的拷贝、剪切的底层过程" class="headerlink" title="文件的拷贝、剪切的底层过程"></a>文件的拷贝、剪切的底层过程</h3><ol>
+<li>拷贝文件：创建一个新的inode节点，并且拷贝数据块内容: <ul>
+<li>stat A</li>
+<li>cp A D</li>
+<li>stat D</li>
+</ul>
+</li>
+<li><p>剪切文件：同个分区里边mv，inode节点不变，只是更新目录文件对应数据块里边的文件名和inode对应关系</p>
+<ul>
+<li>stat D</li>
+<li>mv D F</li>
+<li>stat F</li>
+</ul>
+<p>跨分区mv，则跟拷贝一个道理，需要创建新的inode，因为inode节点不同分区是不能共享的</p>
+<ul>
+<li>mv F /data/F</li>
+<li>stat /data/F</li>
+</ul>
+</li>
+</ol>
+<h3 id="软连接和硬连接过程"><a href="#软连接和硬连接过程" class="headerlink" title="软连接和硬连接过程"></a>软连接和硬连接过程</h3><ol>
+<li>创建软连接会创建一个新的inode节点，其对应数据块内容存储所链接的文件名信息，这样原文件即便删除了，重新建立一个同名的文件，软连接依然能够生效<ul>
+<li>touch A</li>
+<li>stat A</li>
+<li>ln -s A B</li>
+<li>stat A</li>
+<li>stat B</li>
+</ul>
+</li>
+</ol>
+<p>可对不存在的文件创建软链接</p>
+<ul>
+<li>ln -s old.file soft.link</li>
+<li>ls -liF </li>
+</ul>
+<p>由于被指向的文件不存在，此时的软链接 soft.link 就是死链接</p>
+<ul>
+<li>cat soft.link</li>
+</ul>
+<p>创建被指向的文件 old.file，soft.link 恢复成正常的软链接</p>
+<ul>
+<li>echo “This is an original file_A” &gt;&gt; old.file</li>
+<li>cat soft.link </li>
+</ul>
+<ol>
+<li><p>创建硬链接，并不会新建inode节点，只是links加1，还有再目录文件对应数据块上增加一条文件名和inode对应关系记录；只有将硬链接和原文件都删除之后，文件才会真正删除，即links为0才真正删除</p>
+<ul>
+<li>stat A</li>
+<li>ln A C</li>
+<li>stat A</li>
+<li>stat C</li>
+</ul>
+<p>文件有相同的 inode 号以及 data block</p>
+<ul>
+<li>不能交叉文件系统 ln /dev/input/event5 /root/bfile.txt</li>
+<li>不能对目录进行创建硬连接：1. mkdir -p old.dir/test   2. ln old.dir/ hardlink.dir</li>
+</ul>
+</li>
+</ol>
+<h3 id="Linux统一目录结构"><a href="#Linux统一目录结构" class="headerlink" title="Linux统一目录结构"></a>Linux统一目录结构</h3><ol>
+<li>特点：<ul>
+<li>只有一棵目录树来搜索文件和程序</li>
+<li>因为只有一个文件系统，所以 /home、/tmp、/var、/opt 或 /usr 能够创建在和 root（/）文件系统不同的物理硬盘驱动器、分区或逻辑分区上，然后挂载到一个挂载点（目录）上，从而作为 root 文件系统树的一部分。甚至可移动驱动器，比如 USB 驱动器或一个外接的 USB 或 ESATA 硬盘驱动器均可以挂载到 root 文件系统上，成为目录树不可或缺的部分</li>
+</ul>
+</li>
+<li>优点：灵活<ul>
+<li>Linux 发行版升级过程中偶尔重新格式化包含操作系统的硬盘驱动来删除那些长期积累的垃圾，如果 /home 目录是 root 文件系统的一部分（位于同一个硬盘驱动器），那么它也会被格式化，然后需要通过之前的备份恢复。如果 /home 目录作为一个分离的文件系统，那么安装程序将会识别到，并跳过它的格式化。对于存储数据库、邮箱、网页和其它可变的用户以及系统数据的 /var 目录也是这样的</li>
+<li>将 Linux 系统目录树的某些部分作为一个分离的文件系统还有一些其他原因。比如，在很久以前，我还不知道将所有需要的 Linux 目录均作为 root（/）文件系统的一部分可能存在的问题，于是，一些非常大的文件填满了 /home 目录。因为 /home 目录和 /tmp 目录均不是分离的文件系统，而是 root 文件系统的简单子目录，整个 root 文件系统就被填满了。于是就不再有剩余空间可以让操作系统用来存储临时文件或扩展已存在数据文件。首先，应用程序开始抱怨没有空间来保存文件，然后，操作系统也开始异常行动。启动到单用户模式，并清除了 /home 目录中的多余文件之后，终于又能够重新工作了。然后，我使用非常标准的多重文件系统设置来重新安装 Linux 系统，从而避免了系统崩溃的再次发生。</li>
+<li>我曾经遇到一个情况，Linux 主机还在运行，但是却不允许用户通过 GUI 桌面登录。我可以通过使用虚拟控制台之一，通过命令行界面（CLI）本地登录，然后远程使用 SSH 。问题的原因是因为 /tmp 文件系统满了，因此 GUI 桌面登录时所需要的一些临时文件不能被创建。因为命令行界面登录不需要在 /tmp目录中创建文件，所以无可用空间并不会阻止我使用命令行界面来登录。在这种情况下，/tmp 目录是一个分离的文件系统，在 /tmp 所位于的逻辑卷上还有大量的可用空间。我简单地扩展了 /tmp 逻辑卷的容量到能够容纳主机所需要的临时文件，于是问题便解决了。注意，这个解决方法不需要重启，当 /tmp 文件系统扩大以后，用户就可以登录到桌面了。</li>
+<li>当我在一家很大的科技公司当实验室管理员的时候，遇到过另外一个故障。开发者将一个应用程序安装到了一个错误的位置（/var）。结果该应用程序崩溃了，因为 /var 文件系统满了，由于缺乏空间，存储于 /var/log 中的日志文件无法附加新的日志消息。然而，系统仍然在运行，因为 root 文件系统和 /tmp 文件系统还没有被填满。删除了该应用程序并重新安装在 /opt 文件系统后，问题便解决了。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p><a href="https://blog.csdn.net/wanghaofeng/article/details/5720235" target="_blank" rel="noopener">操作系统课程设计–简单文件系统的实现</a> : 时间关系，未读。。。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>万一有人支持呢？￣ω￣=</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Tristan-Hou 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="Tristan-Hou 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/27/ffmpeg函数/" rel="next" title="ffmpeg函数">
+                <i class="fa fa-chevron-left"></i> ffmpeg函数
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/20/back/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="vcomments"></div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar-me.jpg"
+                alt="Tristan-Hou" />
+            
+              <p class="site-author-name" itemprop="name">Tristan-Hou</p>
+              <p class="site-description motion-element" itemprop="description">Forever has turned out to be too long!</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/Tristan-Hou" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:houjh123@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.douban.com/people/47191252/" target="_blank" title="豆瓣">
+                    
+                      <i class="fa fa-fw fa-circle-o"></i>豆瓣</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/hou-tristan-77" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-globe"></i>
+                相关链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://mxplayerdownload.co/" title="MXPlayer" target="_blank">MXPlayer</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#地址"><span class="nav-number">1.1.</span> <span class="nav-text">地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存管理"><span class="nav-number">1.2.</span> <span class="nav-text">内存管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统调用"><span class="nav-number">1.3.</span> <span class="nav-text">系统调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程调度"><span class="nav-number">1.4.</span> <span class="nav-text">线程调度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同步与线程通讯"><span class="nav-number">1.5.</span> <span class="nav-text">同步与线程通讯</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#中断"><span class="nav-number">1.6.</span> <span class="nav-text">中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#时钟与定时器管理"><span class="nav-number">1.7.</span> <span class="nav-text">时钟与定时器管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件系统"><span class="nav-number">1.8.</span> <span class="nav-text">文件系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不同的文件系统"><span class="nav-number">2.</span> <span class="nav-text">不同的文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#What’s-the-best-File-System-for-my-Linux-install"><span class="nav-number">2.1.</span> <span class="nav-text">What’s the best File System for my Linux install?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件系统体系结构"><span class="nav-number">3.</span> <span class="nav-text">文件系统体系结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是文件系统"><span class="nav-number">3.1.</span> <span class="nav-text">什么是文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VFS层"><span class="nav-number">3.2.</span> <span class="nav-text">VFS层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件系统层"><span class="nav-number">3.3.</span> <span class="nav-text">文件系统层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缓存层"><span class="nav-number">3.4.</span> <span class="nav-text">缓存层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#块设备层"><span class="nav-number">3.5.</span> <span class="nav-text">块设备层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#磁盘驱动层"><span class="nav-number">3.6.</span> <span class="nav-text">磁盘驱动层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#磁盘物理层"><span class="nav-number">3.7.</span> <span class="nav-text">磁盘物理层</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工作原理"><span class="nav-number">4.</span> <span class="nav-text">工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#物理磁盘到文件系统"><span class="nav-number">4.1.</span> <span class="nav-text">物理磁盘到文件系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建一个文件的过程"><span class="nav-number">4.2.</span> <span class="nav-text">创建一个文件的过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建一个目录的过程"><span class="nav-number">4.3.</span> <span class="nav-text">创建一个目录的过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链接"><span class="nav-number">4.4.</span> <span class="nav-text">链接</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#硬链接创建过程"><span class="nav-number">4.4.1.</span> <span class="nav-text">硬链接创建过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#软链接创建过程"><span class="nav-number">4.4.2.</span> <span class="nav-text">软链接创建过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#挂载"><span class="nav-number">4.5.</span> <span class="nav-text">挂载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件的拷贝、剪切的底层过程"><span class="nav-number">4.6.</span> <span class="nav-text">文件的拷贝、剪切的底层过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#软连接和硬连接过程"><span class="nav-number">4.7.</span> <span class="nav-text">软连接和硬连接过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux统一目录结构"><span class="nav-number">4.8.</span> <span class="nav-text">Linux统一目录结构</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tristan-Hou</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/three/three.min.js"></script>
+
+  
+  <script type="text/javascript" src="/lib/three/canvas_sphere.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.1.4/dist/Valine.min.js"></script>
+  <script type="text/javascript">
+    new Valine({
+        av: AV,
+        el: '#vcomments' ,
+        verify: false,
+        notify: false,
+        app_id: 'OMklXdnuEcFRnGFEsH32d0y5-gzGzoHsz',
+        app_key: 'pi6DP5cWR2YlAREJhI43Id6J',
+        placeholder: '欢迎一起讨论~'
+    });
+  </script>
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.3"></script>
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("OMklXdnuEcFRnGFEsH32d0y5-gzGzoHsz", "pi6DP5cWR2YlAREJhI43Id6J");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

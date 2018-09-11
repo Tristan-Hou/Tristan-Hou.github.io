@@ -133,7 +133,7 @@
 <meta property="og:site_name" content="Tristan的博客">
 <meta property="og:description" content="学习过程中总是有一些杂七杂八的知识点，不太常用，却偶尔需要。跟大知识点放在一起时间久了不容易找，因此都放在这里。">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-14T14:48:05.563Z">
+<meta property="og:updated_time" content="2018-02-21T14:33:08.129Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="零零碎碎的知识点">
 <meta name="twitter:description" content="学习过程中总是有一些杂七杂八的知识点，不太常用，却偶尔需要。跟大知识点放在一起时间久了不容易找，因此都放在这里。">
@@ -462,7 +462,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  1,359
+                  2,194
                 </span>
               
 
@@ -478,7 +478,7 @@
                   <span class="post-meta-item-text">阅读时长 &asymp;</span>
                 
                 <span title="阅读时长">
-                  5
+                  8
                 </span>
               
             </div>
@@ -650,7 +650,71 @@ Inside second_space
  //结果输出：
  Inside second_space
 </code></pre></li>
-<li></li>
+<li><p>引用vs指针</p>
+<ul>
+<li>没有空引用</li>
+<li>引用创建时必须初始化，指针可以在任意时间点初始化</li>
+<li>引用一旦指向一个对象，就不能指向其他对象</li>
+<li>引用作为函数返回类型，不能返回局部变量引用，因为超出了局部变量的作用范围，但可以返回静态类型</li>
+</ul>
+</li>
+<li><p>C++中的结构体有一个this指针，指向自身。</p>
+</li>
+<li>定义一个函数，您可以为参数列表中后边的每一个参数指定默认值。当调用函数时，如果实际参数的值留空，则使用这个默认值。调用函数时，如果未传递参数的值，则会使用默认值，如果指定了值，则会忽略默认值，使用传递的值。</li>
+<li><p>可以动态传入参数个数和类型</p>
+<pre><code>void func(int i, ...) {
+    cout&lt;&lt;i&lt;&lt;endl;
+
+    //可变参数指针
+    va_list args_p;
+    //读取可变参数，i是最后一个固定参数
+    va_start(args_p, i);
+
+    int a = va_arg(args_p, int);
+    int b = va_arg(args_p, float);
+    ....
+
+    cout&lt;&lt; a &lt;&lt; endl;
+    cout&lt;&lt; b &lt;&lt; endl;
+    ...
+}
+
+void main() {
+    func(9, 10, 11.4f);
+}
+</code></pre></li>
+<li><p>运算符重载：operator + 扩展符号(<code>operator+(const Box &amp;b)</code>)</p>
+</li>
+<li>类拷贝构造函数：浅拷贝(值拷贝)，拷贝的是指针的地址；深拷贝，拷贝的是指针指向的数据内容</li>
+<li>友元(友元函数、友元类和友元成员函数)<ul>
+<li>友元函数是指某些虽然不是类成员函数却能够访问类的所有成员的函数。类授予它的友元特别的访问权，这样该友元函数就能访问到类中的所有成员</li>
+<li>友元类的所有成员函数都是另一个类的友元函数，都可以访问另一个类中的隐藏信息（包括私有成员和保护成员）。当希望一个类可以存取另一个类的私有成员时，可以将该类声明为另一类的友元类。</li>
+<li>友元关系不能被继承；友元关系是单向的，不具有交换性。若类B是类A的友元，类A不一定是类B的友元，要看在类中是否有相应的声明；友元关系不具有传递性。若类B是类A的友元，类C是B的友元，类C不一定是类A的友元，同样要看类中是否有相应的申明</li>
+<li>友元成员函数</li>
+</ul>
+</li>
+<li>类的静态成员：static<ul>
+<li>无论创建多少个类的对象，静态成员都只有一个副本</li>
+<li>在类的所有对象中是共享的</li>
+<li>如果不存在其他的初始化语句，在创建第一个对象时，所有的静态数据都会被初始化为零</li>
+<li>我们不能把静态成员的初始化放置在类的定义中，但是可以在类的外部通过使用范围解析运算符 :: 来重新声明静态变量从而对它进行初始化</li>
+</ul>
+</li>
+<li>基类 &amp; 派生类<ul>
+<li>未使用访问修饰符默认为 private</li>
+<li>一个派生类继承了所有的基类方法，但下列情况除外：<ul>
+<li>基类的构造函数、析构函数和拷贝构造函数</li>
+<li>基类的重载运算符</li>
+<li>基类的友元函数</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>C++多态通过虚函数virtul实现<ul>
+<li>纯虚函数：virtual int area() = 0;</li>
+<li>虚函数表</li>
+</ul>
+</li>
 </ol>
 
       
@@ -806,7 +870,7 @@ Inside second_space
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -817,7 +881,7 @@ Inside second_space
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -828,7 +892,7 @@ Inside second_space
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">11</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
